@@ -1,33 +1,48 @@
 #!/usr/bin/env python3
 
-from flask import Flask, request, send_from_directory
+from flask import Flask, render_template_string, send_from_directory, url_for
 
-from bayes import BayesNet, HTML as bayes_html
+from bayes import bayes
+from perceptron import perceptron
+from water_jug import water_jug
 
-app = Flask(__name__, static_url_path='')
+app = Flask(__name__)
+app.register_blueprint(bayes)
+app.register_blueprint(perceptron)
+app.register_blueprint(water_jug)
 
-@app.route('/bayes/')
-def bayes():
-    return bayes_html
+@app.route('/css/<file>')
+def css(file):
+    return send_from_directory('css', file)
 
-@app.route('/bayes/parse', methods=['POST'])
-def bayes_parse():
-    bayes = request.get_data(as_text=True)
-    net = BayesNet(bayes)
-    if net.has_errors:
-        return net.error
-    else:
-        return net.dot()
+@app.route('/js/<file>')
+def js(file):
+    return send_from_directory('js', file)
 
-# TODO make general path for all /js/* and /css/*
-@app.route('/js/viz.js')
-def viz():
-    return send_from_directory('js', 'viz.js')
-
-@app.route('/ann.html')
-def ann():
-    return send_from_directory('.', 'ann.html')
+@app.route('/')
+def root():
+    links = []
+    for rule in app.url_map.iter_rules():
+        if rule.endpoint in ('root', 'static', 'css', 'js'):
+            continue
+        if not rule.endpoint.endswith(".root"):
+            continue
+        link = rule.endpoint.replace(".root", "")
+        url = url_for(rule.endpoint, **(rule.defaults or {}))
+        links.append((link, url))
+    links = sorted(links)
+    print(links)
+    return render_template_string("""
+    <html>
+        <body>
+            <ul>
+                {% for text, url in links %}
+                <li><a href="{{ url }}">{{ text }}</a></li>
+                {% endfor %}
+            </ul>
+        </body>
+    </html>""", links=links)
 
 if __name__ == '__main__':
-    #app.run(debug=True)
-    app.run()
+    app.run(debug=True)
+    #app.run()
