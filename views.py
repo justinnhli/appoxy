@@ -21,18 +21,7 @@ def js(file):
 
 @app.route('/')
 def root():
-    links = []
-    for rule in app.url_map.iter_rules():
-        if rule.endpoint in ('root', 'static', 'css', 'js'):
-            continue
-        if not rule.endpoint.endswith(".root"):
-            continue
-        link = rule.endpoint.replace(".root", "")
-        url = url_for(rule.endpoint, **(rule.defaults or {}))
-        links.append((link, url))
-    links = sorted(links)
-    print(links)
-    return render_template_string("""
+    template = '''
     <html>
         <body>
             <ul>
@@ -41,7 +30,20 @@ def root():
                 {% endfor %}
             </ul>
         </body>
-    </html>""", links=links)
+    </html>
+    '''
+    links = []
+    for rule in app.url_map.iter_rules():
+        if rule.endpoint in ('root', 'static', 'css', 'js'):
+            continue
+        if not rule.endpoint.endswith('.root'):
+            continue
+        link = rule.endpoint.replace('.root', '')
+        url = url_for(rule.endpoint, **(rule.defaults or {}))
+        links.append((link, url))
+    links = sorted(links)
+    print(links)
+    return render_template_string(template, links=links)
 
 if __name__ == '__main__':
     app.run(debug=True)
