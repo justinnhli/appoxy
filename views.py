@@ -1,23 +1,26 @@
 #!/usr/bin/env python3
 
-from flask import Flask, render_template_string, send_from_directory, url_for
+from os.path import exists as file_exists, join as join_path
+
+from flask import abort, Flask, render_template_string, send_from_directory, url_for
 
 from bayes import bayes
+from info_ret import info_ret
 from perceptron import perceptron
 from water_jug import water_jug
 
 app = Flask(__name__)
 app.register_blueprint(bayes)
+app.register_blueprint(info_ret)
 app.register_blueprint(perceptron)
 app.register_blueprint(water_jug)
 
-@app.route('/css/<file>')
-def css(file):
-    return send_from_directory('css', file)
-
-@app.route('/js/<file>')
-def js(file):
-    return send_from_directory('js', file)
+@app.route('/<sub>/<file>')
+def resources(sub, file):
+    if file.split('.')[-1] in ('css', 'js'):
+        return send_from_directory(sub, file)
+    else:
+        return abort(404)
 
 @app.route('/')
 def root():

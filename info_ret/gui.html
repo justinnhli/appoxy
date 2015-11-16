@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Assignment 5: Natural Language Processing/Information Retrieval</title>
+		<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+		<script src="gui.js"></script>
+		<style>
+			.center {text-align:center; width:100%;}
+			#main-table {border-collapse:collapse; margin:0px auto; width:100%;}
+			#main-table td {border:1px solid #000000; padding:5px; vertical-align:top;}
+			#source-cell {text-align:center; width:30%; max-width:30%;}
+			#source {max-width:100%; white-space: pre; width:80%; word-wrap: normal;}
+			#controls {text-align:center;}
+			#departments {margin:0px auto; text-align:left; width:100%;}
+			#departments td {border-style:none; width:33%;}
+			#results table {border-collapse:collapse; width:100%;}
+			#results table th {text-align:center;}
+			#results table th, #results table td {border:1px solid #000000; width:50%;}
+		</style>
+	</head>
+
+	<body>
+		<div class="center">
+			<h2>Assignment 5: Information Retrieval</h2>
+		</div>
+		<table id="main-table">
+			<tr>
+				<td id="source-cell">
+					<h3>Source Code</h3>
+					<p>DO NOT EDIT unless you know what you're doing</p>
+					<textarea id="source" rows=20></textarea><br>
+					<button onclick="parse_source();">Load</button>
+				</td>
+				<td>
+					<h3>Text Transforms</h3>
+					<ol id="transforms">
+					</ol>
+					<button onclick="add_transform();">Add new transformation</button>
+					<button onclick="update_source();">Update</button>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" id="controls">
+					<h3>Use catalog descriptions from:</h3>
+					<table id="departments">
+						<tr>
+							<td>
+								<input type="checkbox" class="department" value="American Studies">American Studies<br>
+								<input type="checkbox" class="department" value="Art History &amp; Visual Arts">Art History &amp; Visual Arts<br>
+								<input type="checkbox" class="department" value="Biochemistry">Biochemistry<br>
+								<input type="checkbox" class="department" value="Biology">Biology<br>
+								<input type="checkbox" class="department" value="Chemistry">Chemistry<br>
+								<input type="checkbox" class="department" value="Cognitive Science" checked="checked">Cognitive Science<br>
+								<input type="checkbox" class="department" value="Comparative Studies in Literature and Culture">Comparative Studies in Literature and Culture<br>
+								<input type="checkbox" class="department" value="Computer Science" checked="checked">Computer Science<br>
+								<input type="checkbox" class="department" value="Critical Theory &amp; Social Justice">Critical Theory &amp; Social Justice<br>
+								<input type="checkbox" class="department" value="Diplomacy &amp; World Affairs">Diplomacy &amp; World Affairs<br>
+							</td>
+							<td>
+								<input type="checkbox" class="department" value="Economics">Economics<br>
+								<input type="checkbox" class="department" value="Education">Education<br>
+								<input type="checkbox" class="department" value="English">English<br>
+								<input type="checkbox" class="department" value="Geology">Geology<br>
+								<input type="checkbox" class="department" value="History">History<br>
+								<input type="checkbox" class="department" value="Kinesiology">Kinesiology<br>
+								<input type="checkbox" class="department" value="Latino/a &amp; Latin American Studies">Latino/a &amp; Latin American Studies<br>
+								<input type="checkbox" class="department" value="Linguistics">Linguistics<br>
+								<input type="checkbox" class="department" value="Mathematics">Mathematics<br>
+								<input type="checkbox" class="department" value="Music">Music<br>
+							</td>
+							<td>
+								<input type="checkbox" class="department" value="Philosophy">Philosophy<br>
+								<input type="checkbox" class="department" value="Physics">Physics<br>
+								<input type="checkbox" class="department" value="Politics">Politics<br>
+								<input type="checkbox" class="department" value="Psychology">Psychology<br>
+								<input type="checkbox" class="department" value="Religious Studies">Religious Studies<br>
+								<input type="checkbox" class="department" value="Sociology">Sociology<br>
+								<input type="checkbox" class="department" value="Spanish &amp; French Studies">Spanish &amp; French Studies<br>
+								<input type="checkbox" class="department" value="Theater">Theater<br>
+								<input type="checkbox" class="department" value="Urban &amp; Environmental Policy">Urban &amp; Environmental Policy<br>
+								<input type="checkbox" class="department" value="Writing &amp; Rhetoric">Writing &amp; Rhetoric<br>
+							</td>
+						</tr>
+					</table>
+					<button onclick="run();">Run Program</button>
+				</td>
+			</tr>
+		</table>
+
+		<div class="center">
+			<h2>Results</h2>
+		</div>
+		<div id="results">
+		</div>
+
+		<script>
+			init();
+		</script>
+
+	</body>
+</html>

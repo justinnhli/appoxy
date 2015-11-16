@@ -1,0 +1,42 @@
+Program = ( Statement newline )*;
+
+Statement = Operation;
+
+Operation = Select
+          | Break
+		  | Insert
+		  | Delete
+		  | Replace;
+
+Select = "select" Separator Negation Separator Selector Separator Text;
+Negation = "does not"
+         | "does";
+Selector = "contain"
+         | "start with"
+         | "end with";
+
+Break = "break apart" Separator Location;
+
+Insert = "insert" Separator Location Separator Text;
+Delete = "delete" Separator DeletionRange Separator Location;
+DeletionRange = "until"
+              | "from";
+Replace = "replace" Separator Text Separator Text;
+
+Location = LocationModifier Separator Text;
+LocationModifier = "before"
+                 | "after";
+
+Text = PresetText
+     | CustomText;
+PresetText = Separator TextClass;
+TextClass = "Number"
+		  | "Capital Letter"
+		  | "Three Digits"
+          | "Department Name"
+		  | "Department Code";
+CustomText = ( TextChar )+;
+TextChar = print
+         - tab;
+
+Separator = tab;
