@@ -116,7 +116,7 @@ function add_location(parent, transform_id, text_description) {
 }
 
 function add_text(parent, transform_id, description, matching) {
-    var html = '<select id="transform' + transform_id + '_' + description + '">';
+    var html = '<select onchange="text_on_change(this);" id="transform' + transform_id + '_' + description + '">';
     if (matching) {
 	html += '<option>Number</option>';
 	html += '<option>Capital Letter</option>';
@@ -127,8 +127,13 @@ function add_text(parent, transform_id, description, matching) {
     html += '<option>(Other)</option>';
     html += '</select>';
     parent.append($(html));
-    html = '<input type="text" id="transform' + transform_id + '_' + description + '_custom" value="">';
+    html = '<input type="text" id="transform' + transform_id + '_' + description + '_custom" disabled value="">';
     parent.append($(html));
+}
+
+function text_on_change(e) {
+    var text = $(e);
+    $('#' + text.attr('id') + '_custom').prop('disabled', (text.val() !== '(Other)'));
 }
 
 function parse_source() {
@@ -195,7 +200,7 @@ function parse_text(tokens, index, transform_id, description) {
         return index + 1;
     } else {
         $('#transform' + transform_id + '_' + description).val('(Other)');
-        $('#transform' + transform_id + '_' + description + '_custom').val(tokens[index]);
+        $('#transform' + transform_id + '_' + description + '_custom').val(tokens[index]).prop('disabled', false);
         return index;
     }
 }
