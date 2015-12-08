@@ -17,6 +17,8 @@ def process():
     if not departments:
         return ''
     mapping = run_program_on_descriptions(program, departments)
+    if mapping is None:
+        return '<span style="color:#A40000;">Your program has syntax errors, likely because you manually changed the code.<br>Please check your dropbown boxes for errors.</span>'
     html = ['<table id="results">']
     html.append('<tr>')
     html.append('<th>Catalog Description</th>')

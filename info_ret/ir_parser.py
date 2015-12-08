@@ -196,8 +196,7 @@ def run_program_on_descriptions(program, departments):
     program = ''.join(line.lstrip() + '\n' for line in program.splitlines() if line.strip())
     ast = IR_PARSER.parse(program, 'Program')
     if not ast:
-        print('program has syntax errors')
-        exit(1)
+        return None
     transforms = create_transforms(ast)
     result = defaultdict(list)
     descriptions = []
