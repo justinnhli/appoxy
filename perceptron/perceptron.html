@@ -87,6 +87,7 @@
                 var output = 0;
                 var table = '';
                 var trial = 0;
+                var change = 0;
                 var correct = [false, false];
                 var done = false;
                 var i = 0;
@@ -117,7 +118,6 @@
                         activation = activity[i] * weights[i];
                         activations.push(activation);
                         total += activation;
-
                     }
                     // compare to threshold
                     output = 0;
@@ -135,14 +135,20 @@
                         // if incorrect, for each neuron, new weight = old weight + (active * difference * learning rate)
                         log($('<p>Network is <strong>INCORRECT</strong>, learning new weights:</p>'));
                         table = '<table>';
-                        table += '<tr><th>Neuron</th><th>Active</th><th>Old Weight</th><th>Change</th><th>New Weight</th></tr>';
+                        table += '<tr><th>Neuron</th><th>Active</th><th>Old Weight</th><th>Change<br>(active * difference * learning rate)</th><th>New Weight</th></tr>';
                         for (i = 0; i < NUM_NEURONS; i += 1) {
                             table += '<tr>';
                             table += '<td>Neuron ' + (i + 1) + '</td>';
                             table += '<td>' + activity[i] + '</td>';
                             table += '<td>' + weights[i].toFixed(1) + '</td>';
-                            table += '<td>' + (activity[i] * (pattern - output) * learning_rate) + '</td>';
-                            weights[i] += activity[i] * (pattern - output) * learning_rate;
+                            change = activity[i] * (pattern - output) * learning_rate;
+                            table += '<td>';
+                            table += activity[i] + ' * ';
+                            table += '(' + pattern + ' - ' + output + ') * ';
+                            table += learning_rate + ' = ';
+                            table += change;
+                            table += '</td>';
+                            weights[i] += change;
                             table += '<td>' + weights[i].toFixed(1) + '</td>';
                             table += '</tr>';
                         }
