@@ -3,6 +3,7 @@
         <title>COGS 101 Artificial Neural Network Model</title>
         <style>
             body {text-align:center;}
+            #intro {width:40%; margin:auto;}
             table {border-collapse:collapse;}
             th, td {border:1px solid #000000; padding:5px; text-align:center;}
             .black, .white {cursor:pointer; min-width:100px;}
@@ -171,6 +172,11 @@
         </script>
     </head>
     <body>
+        <div id="intro"><p>
+            This web app demonstrates how a single-layer neural network - also known as a <emph>perceptron</emph> - works.
+            Think of the inputs as a line of light hitting the retina - a neuron only fires if there is light hitting it.
+            The goal is for the network to distinguish between the two inputs, so that it will output <code>0</code> for the input pattern on the left, and output <code>1</code> for the input pattern on the right.
+        </p></div>
         <table id="init">
             <tr>
                 <th>Neuron</th>
