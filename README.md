@@ -1,3 +1,1 @@
-# justinnhli-oxy
-
-A repository of all the web apps that I use for teaching.
+A repository of demonstration web apps I've built for teaching.
