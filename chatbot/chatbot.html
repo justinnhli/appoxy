@@ -14,13 +14,10 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
         <script>
             /*global
-                $
+                $, NUM_NEURONS, RULES, RegExp, add_to_transcript, init, interact, load_agent, strip_punctuation
             */
             var NUM_NEURONS = 5;
             var RULES = [];
-            var VAR_REGEX = new RegExp(/\b([A-Z])\1{2,}\b/, "g");
-            var TRIMLEFT_REGEX = new RegExp("^[^0-9A-Za-z]");
-            var TRIMRIGHT_REGEX = new RegExp("[^0-9A-Za-z]$");
 
             var Condition = class Condition {
                 constructor(cond) {
@@ -29,8 +26,8 @@
                     var matches = [];
                     var match = "";
 
-                    if (VAR_REGEX.test(cond)) {
-                        matches = cond.match(VAR_REGEX);
+                    matches = cond.match(new RegExp(/\b([A-Z])\1{2,}\b/, "g"));
+                    if (matches) {
                         for (m = 0; m < matches.length; m += 1) {
                             match = matches[m];
                             if (var_map.indexOf(match) === -1) {
@@ -47,14 +44,9 @@
                     } else {
                         this.condition = new RegExp("^" + cond + "$", "i");
                     }
-                    console.log(cond);
                     this.var_map = var_map;
                 }
                 match(input) {
-                    console.log("Matching " + this.condition + " on " + input);
-                    if (input.match(this.condition)) {
-                        console.log("Matched");
-                    }
                     return input.match(this.condition);
                 }
             }
@@ -92,11 +84,12 @@
             };
 
             function init() {
+                "use strict";
                 var editor_tag = $("#editor");
                 editor_tag.val(editor_tag.val().trim() + "\n");
                 var transcript_tag = $("#transcript");
-                $("#reply-text").on('keypress', function(e) {
-                    if (e.which == 13) {
+                $("#reply-text").on("keypress", function (e) {
+                    if (e.which === 13) {
                         e.preventDefault();
                         interact();
                     }
@@ -113,7 +106,7 @@
                 var lines = $("#editor").val().split("\n");
                 var parsing_actions = false;
                 var conditions = [];
-                var actions = []
+                var actions = [];
                 var line = "";
                 var l = 0;
                 for (l = 0; l < lines.length; l += 1) {
@@ -134,7 +127,7 @@
                         parsing_actions = true;
                         actions.push(line.substring(1));
                     }
-                };
+                }
                 if (conditions.length > 0 && actions.length > 0) {
                     RULES.push(new Rule(conditions, actions));
                 }
@@ -142,7 +135,8 @@
 
             function interact() {
                 "use strict";
-                var rule, cond, act;
+                var rule = null;
+                var act = null;
                 var r = 0;
                 var reply_tag = $("#reply-text");
                 var input = strip_punctuation(reply_tag.val());
@@ -157,7 +151,6 @@
                         add_to_transcript("Chatbot", act);
                         break;
                     }
-
                 }
                 transcript_tag.val(transcript_tag.val() + "\n");
                 reply_tag.val("");
@@ -170,10 +163,10 @@
             }
 
             function strip_punctuation(input) {
+                "use strict";
                 input = input.trim();
-                input = input.replace(TRIMLEFT_REGEX, "");
-                return input.replace(TRIMRIGHT_REGEX, "");
-
+                input = input.replace(new RegExp("^[^0-9A-Za-z]"), "");
+                return input.replace(new RegExp("[^0-9A-Za-z]$"), "");
             }
         </script>
     </head>
@@ -233,10 +226,10 @@
 %Perhaps you would like to be XXXXX.
 
 @I XXXXX you YYYYY
-%Perhaps in your fantasies we YYYYY each other.
-%Do you wish to YYYYY me?
-%You seem to need to YYYYY me.
-%Do you YYYYY anyone else?
+%Perhaps in your fantasies we XXXXX each other.
+%Do you wish to XXXXX me?
+%You seem to need to XXXXX me.
+%Do you XXXXX anyone else?
 
 @XXXXX you YYYYY me ZZZZZ
 %Why do you think I YYYYY you?
@@ -286,10 +279,10 @@
 %Why not?
 
 @Because XXXXX
-%Is that the real reason ?
-%Don't any other reasons come to mind ?
-%Does that reason seem to explain anything else ?
-%What other reasons might there be ?
+%Is that the real reason?
+%Don't any other reasons come to mind?
+%Does that reason seem to explain anything else?
+%What other reasons might there be?
 
 @
 %I'm not sure I understand what you mean.
