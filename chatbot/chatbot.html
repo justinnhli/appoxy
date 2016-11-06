@@ -5,9 +5,11 @@
         <style>
             #intro {width:40%; margin:auto;}
             #lhs {float:left; text-align:center; width:30%;}
-            #rhs {float:right; width:70%;}
+            #rhs {float:right; text-align:center; width:70%;}
             #editor {height:90%; resize:none; width:100%;}
             #transcript {height:90%; resize:none; width:100%;}
+            #reply-text {width:70%;}
+            #reply-button {width:9%;}
         </style>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
         <script>
@@ -93,7 +95,7 @@
                 var editor_tag = $("#editor");
                 editor_tag.val(editor_tag.val().trim() + "\n");
                 var transcript_tag = $("#transcript");
-                $("#reply").on('keypress', function(e) {
+                $("#reply-text").on('keypress', function(e) {
                     if (e.which == 13) {
                         e.preventDefault();
                         interact();
@@ -102,7 +104,7 @@
                 load_agent();
                 transcript_tag.val("");
                 add_to_transcript("Chatbot", "Glad you could come to this counseling session. What is on your mind today?\n");
-                $("#reply").focus();
+                $("#reply-text").focus();
             }
 
             function load_agent() {
@@ -142,7 +144,7 @@
                 "use strict";
                 var rule, cond, act;
                 var r = 0;
-                var reply_tag = $("#reply");
+                var reply_tag = $("#reply-text");
                 var input = strip_punctuation(reply_tag.val());
                 var transcript_tag = $("#transcript");
                 if (input === "") {
@@ -302,8 +304,8 @@
             <textarea id="transcript" style="">
             </textarea>
             <span>
-                <button onclick="interact();">Reply</button>
-                <input type="text" id="reply">
+                <input type="text" id="reply-text">
+                <button id="reply-button" onclick="interact();">Reply</button>
             </span>
         </div>
         <script>init();</script>
