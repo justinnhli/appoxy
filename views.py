@@ -5,12 +5,14 @@ from os.path import exists as file_exists, join as join_path
 from flask import abort, Flask, render_template_string, send_from_directory, url_for
 
 from bayes import bayes
+from chatbot import chatbot
 from info_ret import info_ret
 from perceptron import perceptron
 from water_jug import water_jug
 
 app = Flask(__name__)
 app.register_blueprint(bayes)
+app.register_blueprint(chatbot)
 app.register_blueprint(info_ret)
 app.register_blueprint(perceptron)
 app.register_blueprint(water_jug)
