@@ -7,13 +7,13 @@ from os.path import dirname, isdir, realpath
 
 from flask import abort, Flask, render_template, send_from_directory, url_for
 
-IGNORE_DIRS = ('.git', 'templates', 'css', 'js')
+IGNORE_DIRS = ('templates', 'css', 'js')
 
 app = Flask(__name__)
 
 modules = {}
 for module_name in listdir(dirname(realpath(__file__))):
-    if isdir(module_name) and module_name not in IGNORE_DIRS:
+    if isdir(module_name) and not module_name.startswith('.') and module_name not in IGNORE_DIRS:
         module = import_module(module_name)
         modules[module_name] = module
         app.register_blueprint(getattr(module, module_name))
