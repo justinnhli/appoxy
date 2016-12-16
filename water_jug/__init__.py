@@ -1,3 +1,7 @@
+'''
+Problem space demo on the water jug puzzle
+'''
+
 from os.path import dirname
 
 from flask import Blueprint, send_from_directory

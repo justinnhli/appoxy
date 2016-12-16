@@ -1,21 +1,22 @@
 #!/usr/bin/env python3
 
-from os.path import exists as file_exists, join as join_path
+from collections import namedtuple
+from importlib import import_module
+from os import listdir
+from os.path import dirname, isdir, realpath
 
-from flask import abort, Flask, render_template_string, send_from_directory, url_for
+from flask import abort, Flask, render_template, send_from_directory, url_for
 
-from bayes import bayes
-from chatbot import chatbot
-from info_ret import info_ret
-from perceptron import perceptron
-from water_jug import water_jug
+IGNORE_DIRS = ('.git', 'templates', 'css', 'js')
 
 app = Flask(__name__)
-app.register_blueprint(bayes)
-app.register_blueprint(chatbot)
-app.register_blueprint(info_ret)
-app.register_blueprint(perceptron)
-app.register_blueprint(water_jug)
+
+modules = {}
+for module_name in listdir(dirname(realpath(__file__))):
+    if isdir(module_name) and module_name not in IGNORE_DIRS:
+        module = import_module(module_name)
+        modules[module_name] = module
+        app.register_blueprint(getattr(module, module_name))
 
 @app.route('/<sub>/<file>')
 def resources(sub, file):
@@ -26,30 +27,16 @@ def resources(sub, file):
 
 @app.route('/')
 def root():
-    template = '''
-    <html>
-        <body>
-            <ul>
-                {% for text, url in links %}
-                <li><a href="{{ url }}">{{ text }}</a></li>
-                {% endfor %}
-            </ul>
-        </body>
-    </html>
-    '''
-    links = []
+    Applet = namedtuple('Applet', ('name', 'url', 'doc'))
+    applets = {}
     for rule in app.url_map.iter_rules():
-        if rule.endpoint in ('root', 'static', 'css', 'js'):
-            continue
         if not rule.endpoint.endswith('.root'):
             continue
-        link = rule.endpoint.replace('.root', '')
-        url = url_for(rule.endpoint, **(rule.defaults or {}))
-        links.append((link, url))
-    links = sorted(links)
-    print(links)
-    return render_template_string(template, links=links)
+        name = rule.endpoint.replace('.root', '')
+        url = url_for(rule.endpoint)
+        doc = modules[name].__doc__
+        applets[name] = Applet(name, url, doc)
+    return render_template('index.html', applets=sorted(applets.items()))
 
 if __name__ == '__main__':
     app.run(debug=True)
-    #app.run()
