@@ -17,7 +17,7 @@ for module_name in listdir(dirname(realpath(__file__))):
         continue
     if module_name[0] in '._':
         continue
-    if module_name not in IGNORE_DIRS:
+    if module_name in IGNORE_DIRS:
         continue
     module = import_module(module_name)
     modules[module_name] = module
