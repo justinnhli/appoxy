@@ -13,10 +13,15 @@ app = Flask(__name__)
 
 modules = {}
 for module_name in listdir(dirname(realpath(__file__))):
-    if isdir(module_name) and not module_name.startswith('.') and module_name not in IGNORE_DIRS:
-        module = import_module(module_name)
-        modules[module_name] = module
-        app.register_blueprint(getattr(module, module_name))
+    if not isdir(module_name):
+        continue
+    if module_name[0] in '._':
+        continue
+    if module_name not in IGNORE_DIRS:
+        continue
+    module = import_module(module_name)
+    modules[module_name] = module
+    app.register_blueprint(getattr(module, module_name))
 
 @app.route('/<sub>/<file>')
 def resources(sub, file):
