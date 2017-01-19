@@ -4,15 +4,20 @@
         <title>Demo: Perceptron</title>
         <style>
             body {text-align:center;}
-            #intro {width:40%; margin:auto;}
+            #intro {width:60%; margin:auto;}
             table {border-collapse:collapse;}
             th, td {border:1px solid #000000; padding:5px; text-align:center;}
             .black, .white {cursor:pointer; min-width:100px;}
-            .black {background-color:black;}
-            .white {background-color:white;}
+            .black {background-color:black; color:white; content:"0";}
+            .white {background-color:white; color:black; content:"1";}
             #init {border-collapse:collapse; margin:2em auto;}
             #train {font-size:large; margin:5px;}
             #log {text-align:left;}
+            table.trial {vertical-align:top;}
+            table.trial td {font-size:20px;}
+            table.trial div {width:50px; min-width:50px; max-width:50px; height:50px; margin-bottom:1em;}
+            div.input {border:1px solid #000000;}
+            hr {margin:50px auto;}
         </style>
         <script src="/js/viz.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
@@ -38,7 +43,7 @@
 
             function log(html) {
                 "use strict";
-                $('#log').append(html).append('<br>');
+                $('#log').append(html);
             }
 
             function clear_log() {
@@ -61,12 +66,12 @@
                 dot += '';
                 dot += '    node [shape=box, style=""]';
                 dot += '';
-                dot += '    sum [label="SUM"]';
+                dot += '    sum [label="ADD UP"]';
                 dot += '    threshold [label="> ' + threshold + '?"]';
                 dot += '    output [shape=none, fontsize=24, label="' + output + '"]';
                 dot += '';
                 for (i = 0; i < NUM_NEURONS; i += 1) {
-                    dot += '    n' + i + ' -> sum [label="' + activity[i] + ' * (w=' + weights[i].toFixed(1) + ') = ' + activations[i].toFixed(1) + '"]';
+                    dot += '    n' + i + ' -> sum [label="' + activity[i] + ' * ' + weights[i].toFixed(1) + ' = ' + activations[i].toFixed(1) + '"]';
                 }
                 dot += '';
                 dot += '    sum -> threshold [label="' + total.toFixed(1) + '"]';
@@ -87,7 +92,8 @@
                 var activation = 0;
                 var total = 0;
                 var output = 0;
-                var table = '';
+                var graph = null;
+                var html = '';
                 var trial = 0;
                 var change = 0;
                 var correct = [false, false];
@@ -128,34 +134,72 @@
                     } else {
                         output = 0;
                     }
-                    log(Viz(create_dot(activity, weights, activations, total, threshold, output)));
+                    html = '<table class="trial">';
+                    html += '<tr>';
+                    html += '<th>Input Pattern ' + pattern + '</th>';
+                    html += '<th>Weights</th>';
+                    html += '<th>Multiplied</th>';
+                    html += '<th>Network classifies it as</th></tr>';
+                    html += '<tr>';
+                    html += '<td>';
+                    for (i = 0; i < NUM_NEURONS; i += 1) {
+                        if (activity[i]) {
+                            html += '<div class="input white">1</div>';
+                        } else {
+                            html += '<div class="input black">0</div>';
+                        }
+                    }
+                    html += '</td>';
+                    html += '<td>';
+                    for (i = 0; i < NUM_NEURONS; i += 1) {
+                        html += '<div>' + weights[i].toFixed(1) + '</div>';
+                    }
+                    html += '</td>';
+                    html += '<td>';
+                    for (i = 0; i < NUM_NEURONS; i += 1) {
+                        html += '<div>' + activations[i].toFixed(1) + '</div>';
+                    }
+                    html += '</td>';
+                    html += '<td>';
+                    graph = Viz(create_dot(activity, weights, activations, total, threshold, output));
+                    html += graph;
+                    html += '</td>';
+                    html += '</tr>';
+                    html += '</table>';
+                    log($(html));
+                    html = '<p>';
+                    html += 'The input is Pattern ' + pattern + ', and the ANN thinks it is Pattern ' + output + '. ';
                     if (pattern === output) {
                         // if correct, set correct* to true
                         correct[pattern] = true;
-                        log($('<p>Network is <strong>CORRECT</strong>, no learning necessary</p>'));
+                        html += 'The ANN is <strong>CORRECT</strong>, so the weights do not need to be adjusted.';
+                        html += '</p>';
+                        log($(html));
                     } else {
                         // if incorrect, for each neuron, new weight = old weight + (active * difference * learning rate)
-                        log($('<p>Network is <strong>INCORRECT</strong>, learning new weights:</p>'));
-                        table = '<table>';
-                        table += '<tr><th>Neuron</th><th>Active</th><th>Old Weight</th><th>Change<br>(active * difference * learning rate)</th><th>New Weight</th></tr>';
+                        html += 'The ANN is <strong>INCORRECT</strong>; the weights will be adjusted:';
+                        html += '</p>';
+                        log($(html));
+                        html = '<table>';
+                        html += '<tr><th>Neuron</th><th>Active</th><th>Old Weight</th><th>Change<br>(active * difference * learning rate)</th><th>New Weight</th></tr>';
                         for (i = 0; i < NUM_NEURONS; i += 1) {
-                            table += '<tr>';
-                            table += '<td>Neuron ' + (i + 1) + '</td>';
-                            table += '<td>' + activity[i] + '</td>';
-                            table += '<td>' + weights[i].toFixed(1) + '</td>';
+                            html += '<tr>';
+                            html += '<td>Neuron ' + (i + 1) + '</td>';
+                            html += '<td>' + activity[i] + '</td>';
+                            html += '<td>' + weights[i].toFixed(1) + '</td>';
                             change = activity[i] * (pattern - output) * learning_rate;
-                            table += '<td>';
-                            table += activity[i] + ' * ';
-                            table += '(' + pattern + ' - ' + output + ') * ';
-                            table += learning_rate + ' = ';
-                            table += change;
-                            table += '</td>';
+                            html += '<td>';
+                            html += activity[i] + ' * ';
+                            html += '(' + pattern + ' - ' + output + ') * ';
+                            html += learning_rate + ' = ';
+                            html += change;
+                            html += '</td>';
                             weights[i] += change;
-                            table += '<td>' + weights[i].toFixed(1) + '</td>';
-                            table += '</tr>';
+                            html += '<td>' + weights[i].toFixed(1) + '</td>';
+                            html += '</tr>';
                         }
-                        table += '</table>';
-                        log($(table));
+                        html += '</table>';
+                        log($(html));
                         // if incorrect, set both correct* to false
                         correct[0] = false;
                         correct[1] = false;
@@ -173,10 +217,12 @@
         </script>
     </head>
     <body>
-        <div id="intro"><p>
-            This web app demonstrates how a single-layer neural network - also known as a <emph>perceptron</emph> - works.
-            Think of the inputs as a line of light hitting the retina - a neuron only fires if there is light hitting it.
-            The goal is for the network to distinguish between the two inputs, so that it will output <code>0</code> for the input pattern on the left, and output <code>1</code> for the input pattern on the right.
+        <div id="intro">
+            <p>This web app demonstrates how a single-layer artificial neural network works.</p>
+            <p>The ANN is learning to differentiate between two patterns (Pattern 0 and Pattern 1). Think of each pattern as a line of light hitting neurons in the retina - each neuron fires (set to 1) if there is light, but stays inactive (set to 0) otherwise.</p>
+            <p>Using its weights, the ANN then decides whether it is Pattern 0 or Pattern 1 (the number on the far right in each trial). If this number matches the input pattern number, the ANN is correct and no change is necessary. If this number does <emph>not</emph> match the input pattern number, however, then the weights are adjusted.</p>
+            <p>This process is then repeated; as long as the ANN gets either pattern incorrect, it will continue changing the weights.</p>
+            <p>Try changing the patterns or the initial weights - <emph>the ANN always learns the correct classifications</emph> at the end.</p>
         </p></div>
         <table id="init">
             <tr>
