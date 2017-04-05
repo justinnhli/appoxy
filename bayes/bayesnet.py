@@ -13,8 +13,8 @@ class Node:
         self.parents = set()
         self.children = set()
         self.depth = 0
-        self.values = set()
-        self.cpt = {}
+        self.values = []
+        self.cpt = []
         self.observation = None
         self.posterior = {}
         self.reset()
@@ -35,18 +35,17 @@ class Node:
         result = []
         key_table = []
         prob_table = []
-        values_header = tuple("P({})".format(value) for value in sorted(self.values))
-        sorted_parents = sorted(self.parents, key=(lambda p: p.name))
-        for key, probs in sorted(self.cpt.items()):
+        values_header = tuple("P({})".format(value) for value in self.values)
+        for key, probs in self.cpt:
             key = dict(key)
             probs = dict(probs)
-            key_table.append(tuple(key[parent.name] for parent in sorted_parents))
-            prob_table.append(["{:.2f}%".format(float(100 * probs[value])) for value in sorted(self.values)])
-        key_widths = tuple(max(len(row[col]) for row in chain(([parent.name for parent in sorted_parents],), key_table)) for col in range(len(self.parents)))
+            key_table.append(tuple(key[parent.name] for parent in self.parents))
+            prob_table.append(["{:.2f}%".format(float(100 * probs[value])) for value in self.values])
+        key_widths = tuple(max(len(row[col]) for row in chain(([parent.name for parent in self.parents],), key_table)) for col in range(len(self.parents)))
         prob_widths = tuple(max(len(row[col]) for row in chain((values_header,), prob_table)) for col in range(len(self.values)))
         result.append("".join([
                 "|",
-                "|".join(" {} ".format(col.ljust(key_widths[i])) for i, col in enumerate(parent.name for parent in sorted_parents)),
+                "|".join(" {} ".format(col.ljust(key_widths[i])) for i, col in enumerate(parent.name for parent in self.parents)),
                 "||",
                 "|".join(" {} ".format(col.ljust(prob_widths[i])) for i, col in enumerate(values_header)),
                 "|",
@@ -69,8 +68,8 @@ class Node:
         return "\n".join(result)
     def posterior_string(self):
         result = []
-        values_header = tuple("P({})".format(value) for value in sorted(self.values))
-        probs = tuple("{:.2f}%".format(float(100 * self.posterior[value])) for value in sorted(self.values))
+        values_header = tuple("P({})".format(value) for value in self.values)
+        probs = tuple("{:.2f}%".format(float(100 * self.posterior[value])) for value in self.values)
         prob_widths = tuple(max(len(row[col]) for row in (values_header, probs)) for col in range(len(self.values)))
         result.append("".join([
                 "|",
@@ -159,7 +158,7 @@ class BayesNet:
             self._error("The CPT for \"{}\" has extra input columns for \"{}\"".format(node.name, "\", \"".join(sorted(set(header_parents) - parent_names))))
         if len(header_probs) < 2:
             self._error("There are not enough values for \"{}\" in its CPT header (at least two needed).".format(node.name))
-        node.values = set(headers[len(parents):])
+        node.values = headers[len(parents):]
         num_rows = my_product(len(self.nodes[parent_name].values) for parent_name in header_parents)
         for line_diff in range(num_rows):
             try:
@@ -171,14 +170,14 @@ class BayesNet:
                 self._error("Row {} of the CPT for \"{}\" has {} columns than expected from the header".format(line_diff + 1,
                         node.name,
                         ("more" if len(data) > len(header_parents) + len(node.values) else "fewer")))
-            key = tuple(sorted(zip(header_parents, data[:len(header_parents)])))
+            key = tuple(zip(header_parents, data[:len(header_parents)]))
             for parent_name, value in key:
                 if value not in self.nodes[parent_name].values:
                     self._error("\"{}\" is not a valid value of \"{}\" in row {} of the CPT for \"{}\"".format(value, parent_name, line_diff + 1, node.name))
             if key in node.cpt:
                 self._error("The probabilities for \"{}\" when ({}) has been specified twice".format(node.name, ", ".join("{} is {}".format(parent, value) for parent, value in key)))
             try:
-                probs = tuple(sorted(zip(header_probs, (Fraction(datum) for datum in data[len(header_parents):]))))
+                probs = tuple(zip(header_probs, (Fraction(datum) for datum in data[len(header_parents):])))
             except ValueError:
                 self._error("Row {} of the CPT for \"{}\" contains an invalid probability".format(line_diff + 1, node.name))
             if not all(0 <= prob[1] <= 1 for prob in probs):
@@ -188,7 +187,7 @@ class BayesNet:
                         line_diff + 1,
                         node_name,
                         ("{} = {}".format(" + ".join(str(prob[1]) for prob in probs), sum(prob[1] for prob in probs)))))
-            node.cpt[key] = probs
+            node.cpt.append((key, probs))
         return line_num + num_rows + 1
     def _check_dag(self):
         # order nodes topologically for reading CPTs
@@ -237,7 +236,7 @@ class BayesNet:
                 pi = 1
                 for node in relevant_nodes:
                     key = tuple((parent.name, assignment[parent]) for parent in sorted(node.parents, key=(lambda n: n.name)))
-                    pi *= dict(node.cpt[key])[assignment[node]]
+                    pi *= dict(dict(node.cpt)[key])[assignment[node]]
                 sigma += pi
             result[value] = sigma
         total = sum(result.values())
