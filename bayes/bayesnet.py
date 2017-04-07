@@ -236,7 +236,7 @@ class BayesNet:
                 pi = 1
                 for node in relevant_nodes:
                     key = tuple((parent.name, assignment[parent]) for parent in sorted(node.parents, key=(lambda n: n.name)))
-                    pi *= dict(dict(node.cpt)[key])[assignment[node]]
+                    pi *= dict(dict((tuple(sorted(key)), value) for key, value in node.cpt)[key])[assignment[node]]
                 sigma += pi
             result[value] = sigma
         total = sum(result.values())
