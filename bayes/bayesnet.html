@@ -7,17 +7,49 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
         <script src="/js/viz-lite.js"></script>
         <script>
-            function draw() {
-                $.post('/bayes/parse', $('#bayes').val()).done(function(response) {
-                    var div = $('#rhs');
-                    div.empty();
-                    if (response.substring(0, 5) === 'Error') {
-                        div.append(response);
+            // On load
+            $(function () {
+                var $bayes = $('#bayes');
+                var $rhs = $('#rhs');
+                var hashRegex = /[#&]network(?:=([^&#]*)|&|$)/;
+
+                function draw() {
+                    var network = $bayes.val()
+                    $.post('/bayes/parse', network).done(function(response) {
+                        $rhs.empty();
+                        if (response.substring(0, 5) === 'Error') {
+                            $rhs.append(response);
+                        } else {
+                            $rhs.append(Viz(response));
+                        }
+                    });
+                    saveNetwork(network);
+                }
+
+                function getSavedNetwork() {
+                    var hash = location.hash;
+                    if (hashRegex.test(hash)) {
+                        var encoded = hashRegex.exec(hash)[1];
+                        return window.atob(encoded);
                     } else {
-                        div.append(Viz(response));
+                        return '';
                     }
+                }
+
+                function saveNetwork(network) {
+                    location.hash = '#network=' + window.btoa(network);
+                }
+
+                var initialNetwork = getSavedNetwork();
+                if (initialNetwork !== '') {
+                    $bayes.val(initialNetwork);
+                }
+                draw();
+
+                $('#drawButton').click(function () {
+                    draw();
                 });
-            }
+            });
         </script>
     </head>
     <body>
@@ -55,7 +87,7 @@ false  0.01  0.99
 # observe john-calls is true
 # observe mary-calls is true
 # predict</textarea><br>
-            <button onclick="draw();">Draw</button>
+            <button id="drawButton">Draw</button>
         </div>
         <div id="rhs" style="float:right; width:70%;">
         </div>
