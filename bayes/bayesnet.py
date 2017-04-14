@@ -240,6 +240,8 @@ class BayesNet:
                 sigma += pi
             result[value] = sigma
         total = sum(result.values())
+        if total == 0:
+            self._error('The observations are statistically impossible (have posterior probability of 0%)')
         for key in result:
             result[key] /= total
         return result
