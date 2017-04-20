@@ -44,6 +44,10 @@
                     $('#drawButton').click(function () {
                         draw();
                     });
+                    $(window).on('hashchange', function() {
+                        loadNetwork();
+                        draw();
+                    });
                 }
 
                 main();
