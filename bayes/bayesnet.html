@@ -26,13 +26,10 @@
                     saveNetwork(network);
                 }
 
-                function getSavedNetwork() {
+                function loadNetwork() {
                     var hash = location.hash;
                     if (hashRegex.test(hash)) {
-                        var encoded = hashRegex.exec(hash)[1];
-                        return window.atob(encoded);
-                    } else {
-                        return '';
+                        $bayes.val(window.atob(hashRegex.exec(hash)[1]));
                     }
                 }
 
@@ -41,10 +38,7 @@
                 }
 
                 function main() {
-                    var initialNetwork = getSavedNetwork();
-                    if (initialNetwork !== '') {
-                        $bayes.val(initialNetwork);
-                    }
+                    loadNetwork();
                     draw();
 
                     $('#drawButton').click(function () {
