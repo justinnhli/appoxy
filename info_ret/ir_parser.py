@@ -201,19 +201,17 @@ def run_program_on_descriptions(program, departments):
     result = defaultdict(list)
     descriptions = []
     with open(dirname(__file__) + '/descriptions') as fd:
-        descriptions = fd.read().split("\n\n")
+        descriptions = fd.read().strip().split("\n\n")
     for description in descriptions:
-        if description.splitlines()[0] not in departments:
-            continue
         lines = description.strip().splitlines()
-        department = lines[0].strip()
-        number = lines[1].strip()
-        number = number[:number.index(' ')]
+        dept_code, number, *_ = lines[0].strip().split()
+        if code2text.get(dept_code, '') not in departments:
+            continue
+        department = code2text.get(dept_code, '')
         course = CourseDescription(department, number, description)
         for line in description.splitlines():
             result[course].extend(run_transforms(transforms, CourseDescription(department, number, line.strip())))
     return result
-
 
 def main():
     #select\tdoes\tcontain\t\tnumber
