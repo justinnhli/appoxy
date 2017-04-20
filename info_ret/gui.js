@@ -122,8 +122,8 @@ function add_text(parent, transform_id, description, matching) {
 	html += '<option>Capital Letter</option>';
         html += '<option>Three Digits</option>';
     }
-    html += '<option>Department Name</option>';
-    html += '<option>Department Code</option>';
+    html += '<option>Course Department Name</option>';
+    html += '<option>Course Department Code</option>';
     html += '<option>(Other)</option>';
     html += '</select>';
     parent.append($(html));
