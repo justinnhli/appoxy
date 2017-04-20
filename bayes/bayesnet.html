@@ -40,15 +40,19 @@
                     location.hash = '#network=' + window.btoa(network);
                 }
 
-                var initialNetwork = getSavedNetwork();
-                if (initialNetwork !== '') {
-                    $bayes.val(initialNetwork);
-                }
-                draw();
-
-                $('#drawButton').click(function () {
+                function main() {
+                    var initialNetwork = getSavedNetwork();
+                    if (initialNetwork !== '') {
+                        $bayes.val(initialNetwork);
+                    }
                     draw();
-                });
+
+                    $('#drawButton').click(function () {
+                        draw();
+                    });
+                }
+
+                main();
             });
         </script>
     </head>
