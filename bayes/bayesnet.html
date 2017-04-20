@@ -11,7 +11,6 @@
             $(function () {
                 var $bayes = $('#bayes');
                 var $rhs = $('#rhs');
-                var hashRegex = /[#&]network(?:=([^&#]*)|&|$)/;
 
                 function draw() {
                     var network = $bayes.val()
@@ -26,16 +25,28 @@
                     saveNetwork(network);
                 }
 
+                function param(obj) {
+                    return $.param(obj, false);
+                }
+
+                function deparam(str) {
+                    var obj = {};
+                    str.replace(/([^=&]+)=([^&]*)/g, function(m, key, value) {
+                        obj[decodeURIComponent(key)] = decodeURIComponent(value);
+                    });
+                    return obj;
+                }
+
                 function loadNetwork() {
-                    var hash = location.hash;
-                    if (hashRegex.test(hash)) {
-                        $bayes.val(window.atob(hashRegex.exec(hash)[1]));
+                    var hash = deparam(location.hash.substr(1));
+                    if ('network' in hash) {
+                        $bayes.val(window.atob(hash['network']));
                     }
                     draw();
                 }
 
                 function saveNetwork(network) {
-                    location.hash = '#network=' + window.btoa(network);
+                    location.hash = param({'network': window.btoa(network)});
                 }
 
                 function main() {
