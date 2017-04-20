@@ -31,6 +31,7 @@
                     if (hashRegex.test(hash)) {
                         $bayes.val(window.atob(hashRegex.exec(hash)[1]));
                     }
+                    draw();
                 }
 
                 function saveNetwork(network) {
@@ -39,14 +40,12 @@
 
                 function main() {
                     loadNetwork();
-                    draw();
 
                     $('#drawButton').click(function () {
                         draw();
                     });
                     $(window).on('hashchange', function() {
                         loadNetwork();
-                        draw();
                     });
                 }
 
