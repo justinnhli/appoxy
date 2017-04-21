@@ -1,0 +1,123 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Demo: Chatbot</title>
+        <style>
+			body {margin:0;}
+			div {text-align:center;}
+			#editor {width:90%; height:50em;}
+			#board {background-color:#000000; display:flex; margin:0;}
+			#grid {border-collapse:collapse; margin:auto; text-align:center; vertical-align:middle; width:90%;}
+			#grid th {background-color:#0E188E; border:10px solid #000000; border-bottom:15px solid #000000; color:#FFFFFF; font-size:24pt;}
+			#grid td {background-color:#0E188E; border:10px solid #000000; color:#CF985D; font-size:45pt; font-weight:bold; padding:30px;}
+			#end {color:#FFFFFF; cursor:pointer;}
+			#question, #answer {background-color:#0E188E; color:#FFFFFF; display:flex; font-size:60pt; justify-content:center; align-items:center; margin:0; text-align:center; vertical-align:center;}
+        </style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script src="jeopardy.js"></script>
+    </head>
+    <body>
+        <div id="input">
+			<h1><em>Jeopardy!</em> Simulator</h1>
+            <textarea id="editor">
+The Mind
+
+Q: This is the idea that the mental world is completely distinct from the physical world.
+A: What is Dualism?
+Q: This is the idea that mental phenomena are identical to physical phenomena.
+A: What is Materialism?
+Q: This is the idea that the mind is too difficult to scientifically study, and that instead science should focus on how individuals respond to inputs.
+A: What is Behaviorism?
+Q: This theory of mind emphasizes removing unscientific language from our folk psychological language.
+A: What is eliminative materialism?
+Q: This is the version of the Turing Test as described in the original paper.
+A: Can a machine play the Imitation Game as well as a human participant?
+Q: This is the theory of mind Alan Turing is associated with.
+A: What is Functionalism?
+
+The Brain
+
+Q: This specialized cell that transmits nerve impulses.
+A: What is a neuron?
+Q: This part of a neuron receives electrical signals from other neurons.
+A: What are dendrites?
+Q: This part of the brain is highly interconnected and involved in emotional decision making.
+A: What is the amygdala?
+Q: This type of brain damage leads to difficulty producing fluent sentences, but does not affect the ability to comprehend language.
+A: What is Broca's Aphasia?
+Q: Patients who exhibit damage to this structure typically cannot attend to their left visual field, even though they are not blind.
+A: What is the right parietal lobe?
+Q: This theory differentiates between higher and lower states of consciousness based on brain activity
+A: What is the Integrated Information Theory?
+
+Computation
+
+Q: This type of artificial intelligence takes inspiration from how the human brain works.
+A: What are Artificial Neural Networks?
+Q: These computer programs aim to build a complete system by combining theories from multiple cognitive systems.
+A: What is an integrated model of cognition?
+Q: David Marr suggests all three of these are necessary for a complete description of an information processing system.
+A: What are the computational, algorithmic, and implementation levels of analysis?
+Q: These four things must be defined for a problem if the A* algorithm is to be applied.
+A: What are states, actions, costs, and heuristics?
+Q: Besides a healthy brain, these three technological components are necessary for a brain-machine interface.
+A: What are a sensor, decoder, and user interface (assistive technology)?
+Q: This ability allows people (and ideally, computers or networks) to maintain limited functionality even when a large portion of it has been destroyed or rendered inoperative.
+A: What is graceful degradation?
+
+Cognitive Psychology
+
+Q: This negative association between a neutral stimulus and a response is a result of repeatedly pairing the neutral stimulus with an aversive unconditioned stimulus.
+A: What is fear conditioning?
+Q: This problem is caused by the fundamentally ambiguous mapping between sources of retinal stimulation and the retinal images that are caused by those sources.
+A: What is the inverse optics problem?
+Q: This is the relationship described by Weber's Law?
+A: What is the perception of change in a given stimulus that will be just noticeable is a constant ratio of the original stimulus
+Q: In this type of reasoning, the conclusion is always correct if the premises are sound and the structure is valid.
+A: What is deductive reasoning?
+Q: Two examples of this are ecological and computational.
+A: What are types of constraints in bounded rationality?
+Q: This type of knowledge that allows us to do things like run, play a musical instrument, or cook dinner.
+A: What is procedural knowledge?
+
+Linguistics
+
+Q: The ability for apes to do this bring into question whether non-human animals have language.
+A: What is sign language?
+Q: In this experiment, people with more words for a color were quicker to distinguish between shades of that color.
+A: What is the "Russian Blues" study?
+Q: This is how the earliest conversational chatbots work.
+A: What is pattern matching based on input sentences?
+Q: Noam Chomsky claims that this linguistic structure is universal for all human languages
+A: What is recursion/embeddings?
+Q: This is known as the nativism versus empiricism debate.
+A: Is language inherent in our brain structure, or do we learn it from statistics in the world?
+Q: According to Noam Chomsky, the observation that deaf children in Nicaragua developed their own language is evidence for this.
+A: A universal, innate, uniquely human language acquisition device in brain.
+
+Miscellaneous
+
+Q: This is acronymized as WEIRD.
+A: What is Western, Educated, Industrialized, Rich, and Democratic?
+Q: This selection process mediates between sensation and perception
+A: What is attention?
+Q: This is the idea that the brain can change as one learns and that intelligence is malleable.
+A: What is the growth mindset?
+Q: Libet's experiment demonstrating neural correlates of action before the conscious decision to move contributes to this debate.
+A: What is the free will debate?
+Q: This is the idea that perception of a whole object is created by combining the individual features.
+A: What is bottom-up processing?
+Q: To conceive of an observation or an argument which negates the statement in question is the hallmark of this.
+A: What is the scientific method?
+            </textarea>
+			<p><button id="start">Start Game!</button></p>
+        </div>
+        <div id="board">
+			<div id="board-header"></div>
+		</div>
+        <div id="question">
+        </div>
+        <div id="answer">
+        </div>
+    </body>
+</html>
