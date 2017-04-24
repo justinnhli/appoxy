@@ -147,6 +147,7 @@ $(function () {
 		parseQuestions();
 		checkQuestions();
 		showBoard();
+		$('body').css('background-color', '#0E188E');
 	}
 
 	function endGame() {
@@ -155,6 +156,7 @@ $(function () {
 		categories = [];
 		questions = {};
 		numQuestions = 0;
+		$('body').css('background-color', '#FFFFFF');
 	}
 
 	function main() {
