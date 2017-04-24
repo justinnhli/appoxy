@@ -4,9 +4,9 @@ Statement = Operation;
 
 Operation = Select
           | Break
-		  | Insert
-		  | Delete
-		  | Replace;
+          | Insert
+          | Delete
+          | Replace;
 
 Select = "select" Separator Negation Separator Selector Separator Text;
 Negation = "does not"
@@ -31,10 +31,10 @@ Text = PresetText
      | CustomText;
 PresetText = Separator TextClass;
 TextClass = "Number"
-		  | "Capital Letter"
-		  | "Three Digits"
-          | "Department Name"
-		  | "Department Code";
+          | "Capital Letter"
+          | "Three Digits"
+          | "Course Department Name"
+          | "Course Department Code";
 CustomText = ( TextChar )+;
 TextChar = print
          - tab;

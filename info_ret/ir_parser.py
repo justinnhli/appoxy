@@ -99,9 +99,9 @@ def create_text_fn(ast):
             return (lambda course: tuple((match.start(), match.end()) for match in re.finditer('[A-Z]+', course.text)))
         elif preset == 'Three Digits':
             return (lambda course: tuple((match.start(), match.end()) for match in re.finditer('[0-9]{3}', course.text)))
-        elif preset == 'Department Name':
+        elif preset == 'Course Department Name':
             return (lambda course: tuple((match.start(), match.end()) for match in re.finditer(course.department, course.text)))
-        elif preset == 'Department Code':
+        elif preset == 'Course Department Code':
             return (lambda course: tuple((match.start(), match.end()) for match in re.finditer(text2code[course.department], course.text)))
         elif preset == 'Course Number':
             return (lambda course: tuple((match.start(), match.end()) for match in re.finditer(course.number, course.text)))
@@ -119,9 +119,9 @@ def create_location_fn(ast):
 def create_text(ast):
     if ast.descendants('*')[0].term == 'PresetText':
         preset = ast.descendants('PresetText/TextClass')[0].match
-        if preset == 'Department Name':
+        if preset == 'Course Department Name':
             return (lambda course: course.department)
-        elif preset == 'Department Code':
+        elif preset == 'Course Department Code':
             return (lambda course: text2code[course.department])
         elif preset == 'Course Number':
             return (lambda course: course.number)
@@ -230,13 +230,13 @@ def main():
         delete\tuntil\tbefore\t\tCapital Letter
         break apart\tbefore\t or 
         delete\tuntil\tafter\t or 
-        replace\t\tDepartment Name\t\tDepartment Code
+        replace\t\tDepartment Name\t\tCourse Department Code
         delete\tfrom\tafter\t\tThree Digits
         select\tdoes not\tcontain\tperm
         delete\tuntil\tafter\tOR
         delete\tuntil\tbefore\t\tCapital Letter
         replace\tCog Sci\tCOGS
-        insert\tbefore\t211\t\tDepartment Code
+        insert\tbefore\t211\t\tCourse Department Code
     """
     descriptions  = (
         """
