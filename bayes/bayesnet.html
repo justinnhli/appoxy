@@ -7,17 +7,61 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
         <script src="/js/viz-lite.js"></script>
         <script>
-            function draw() {
-                $.post('/bayes/parse', $('#bayes').val()).done(function(response) {
-                    var div = $('#rhs');
-                    div.empty();
-                    if (response.substring(0, 5) === 'Error') {
-                        div.append(response);
-                    } else {
-                        div.append(Viz(response));
+            // On load
+            $(function () {
+                var $bayes = $('#bayes');
+                var $rhs = $('#rhs');
+
+                function draw() {
+                    var network = $bayes.val()
+                    $.post('/bayes/parse', network).done(function(response) {
+                        $rhs.empty();
+                        if (response.substring(0, 5) === 'Error') {
+                            $rhs.append(response);
+                        } else {
+                            $rhs.append(Viz(response));
+                        }
+                    });
+                    saveNetwork(network);
+                }
+
+                function param(obj) {
+                    return $.param(obj, false);
+                }
+
+                function deparam(str) {
+                    var obj = {};
+                    str.replace(/([^=&]+)=([^&]*)/g, function(m, key, value) {
+                        obj[decodeURIComponent(key)] = decodeURIComponent(value);
+                    });
+                    return obj;
+                }
+
+                function loadNetwork() {
+                    var hash = deparam(location.hash.substr(1));
+                    if ('network' in hash) {
+                        $bayes.val(window.atob(hash['network']));
                     }
-                });
-            }
+                    draw();
+                }
+
+                function saveNetwork(network) {
+                    location.hash = param({'network': window.btoa(network)});
+                }
+
+                function main() {
+                    loadNetwork();
+
+                    $('#drawButton').click(function () {
+                        draw();
+                    });
+                    $(window).on('hashchange', function() {
+                        loadNetwork();
+                    });
+                }
+
+                main();
+            });
         </script>
     </head>
     <body>
@@ -55,7 +99,7 @@ false  0.01  0.99
 # observe john-calls is true
 # observe mary-calls is true
 # predict</textarea><br>
-            <button onclick="draw();">Draw</button>
+            <button id="drawButton">Draw</button>
         </div>
         <div id="rhs" style="float:right; width:70%;">
         </div>
