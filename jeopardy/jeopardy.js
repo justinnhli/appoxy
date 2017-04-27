@@ -9,9 +9,12 @@ $(function () {
 	var $board = $('#board');
 	var $question = $('#question');
 	var $answer = $('#answer');
+	var $error = $('#error');
 
 	var FADE_OUT_TIME = 200;
 	var FADE_IN_TIME = 600;
+
+	var hasErrors = false;
 
 	function parseQuestions() {
 		var lines = $('#editor').val().trim().split('\n');
@@ -22,11 +25,12 @@ $(function () {
 		for (var i = 0; i < lines.length; i++) {
 			var line = lines[i].trim();
 			if (line.startsWith('Q:')) {
-				if (category) {
+				if (category && answer === '') {
 					question = line.substr(2).trim();
 					answer = '';
 				} else {
-					// FIXME error handling
+					$error.append($('<p>You seem to either have a question outside any category, or have a question without an answer:<br>' + line + '</p>'));
+					hasErrors = true;
 				}
 			} else if (line.startsWith('A:')) {
 				if (category && question) {
@@ -35,14 +39,19 @@ $(function () {
 					question = '';
 					answer = ''
 				} else {
-					// FIXME error handling
+					$error.append($('<p>You seem to either have an answer outside any category, or have an answer without a question:<br>' + line + '</p>'));
+					hasErrors = true;
 				}
 			} else if (line) {
+				if (question !== '' || answer !== '') {
+					$error.append($('<p>You seem to have a question without an answer in the "' + category + '" category.</p>'));
+					hasErrors = true;
+				}
 				category = line; 
 				categories.push(category);
 				questions[category] = [];
 				question = '';
-				answer = '';
+				answer = ''
 			}
 		}
 	}
@@ -54,8 +63,9 @@ $(function () {
 			var category = categories[i];
 			if (numQuestions === -1) {
 				numQuestions = questions[category].length;
-			} else if (numQuestions === questions[category].length) {
-				// FIXME error handling
+			} else if (numQuestions !== questions[category].length) {
+				$error.append($('<p>The "' + category + '" category seems to have ' + numQuestions + ' questions, when the first category has ' + questions[category].length + '.<p>'));
+				hasErrors = true;
 			}
 		}
 		// add coords for all questions
@@ -139,11 +149,21 @@ $(function () {
 		$board.fadeIn(FADE_IN_TIME);
 	}
 
+	function reset() {
+		categories = []
+		questions = {};
+		numQuestions = 0;
+		hasErrors = false;
+		$error.empty();
+	}
+
 	function startGame() {
 		parseQuestions();
 		checkQuestions();
-		showBoard();
-		$('body').css('background-color', '#0E188E');
+		if (!hasErrors) {
+			showBoard();
+			$('body').css('background-color', '#0E188E');
+		}
 	}
 
 	function endGame() {
