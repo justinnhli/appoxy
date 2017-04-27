@@ -91,11 +91,7 @@ $(function () {
 		$board.empty();
 		$board.append($(html));
 		$board.append($('<p></p><p><span id="end">X</span></p>'));
-		$('#grid td').css({
-			cursor: 'pointer',
-			'min-width': (100 / categories.length) + '%',
-			'max-width': (100 / categories.length) + '%',
-		}).on('click', boardOnClick);
+		$('#grid td').css({cursor: 'pointer'}).on('click', boardOnClick);
 		$('#board p span').on('click', endGame);
 		$input.fadeOut(FADE_OUT_TIME);
 		$board.fadeIn(FADE_IN_TIME);
