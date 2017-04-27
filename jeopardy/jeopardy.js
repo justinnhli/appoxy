@@ -10,8 +10,8 @@ $(function () {
 	var $question = $('#question');
 	var $answer = $('#answer');
 
-	var fadeOutTime = 200;
-	var fadeInTime = 600;
+	var FADE_OUT_TIME = 200;
+	var FADE_IN_TIME = 600;
 
 	function parseQuestions() {
 		var lines = $('#editor').val().trim().split('\n');
@@ -97,8 +97,8 @@ $(function () {
 			'max-width': (100 / categories.length) + '%',
 		}).on('click', boardOnClick);
 		$('#board p span').on('click', endGame);
-		$input.fadeOut(fadeOutTime);
-		$board.fadeIn(fadeInTime);
+		$input.fadeOut(FADE_OUT_TIME);
+		$board.fadeIn(FADE_IN_TIME);
 	}
 
 	function boardOnClick(e) {
@@ -117,8 +117,8 @@ $(function () {
 
 	function showQuestion(question) {
 		$question.html('<span id="question_' + question.coord + '">' + question.question.toUpperCase() + '</span>');
-		$board.fadeOut(fadeOutTime);
-		$question.fadeIn(fadeInTime);
+		$board.fadeOut(FADE_OUT_TIME);
+		$question.fadeIn(FADE_IN_TIME);
 		$('#question span').css('cursor', 'pointer').on('click', questionOnClick);
 	}
 
@@ -133,14 +133,14 @@ $(function () {
 
 	function showAnswer(question) {
 		$answer.html('<span>' + question.answer.toUpperCase() + '</span>');
-		$question.fadeOut(fadeOutTime);
-		$answer.fadeIn(fadeInTime);
+		$question.fadeOut(FADE_OUT_TIME);
+		$answer.fadeIn(FADE_IN_TIME);
 		$('#answer span').css('cursor', 'pointer').on('click', answerOnClick);
 	}
 
 	function answerOnClick(e) {
-		$answer.fadeOut(fadeOutTime);
-		$board.fadeIn(fadeInTime);
+		$answer.fadeOut(FADE_OUT_TIME);
+		$board.fadeIn(FADE_IN_TIME);
 	}
 
 	function startGame() {
@@ -151,8 +151,8 @@ $(function () {
 	}
 
 	function endGame() {
-		$board.fadeOut(fadeOutTime);
-		$input.fadeIn(fadeInTime);
+		$board.fadeOut(FADE_OUT_TIME);
+		$input.fadeIn(FADE_IN_TIME);
 		categories = [];
 		questions = {};
 		numQuestions = 0;
