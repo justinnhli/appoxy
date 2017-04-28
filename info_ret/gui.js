@@ -226,7 +226,7 @@ function update_source() {
             result += update_replace(selector.parent(), i + 1) + '\n';
         }
     }
-    $('#source').val(result.trim());
+    $('#source').val(result);
 }
 
 function update_select(list_item, transform_id) {

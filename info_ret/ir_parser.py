@@ -199,7 +199,7 @@ def read_program_from_file(file):
         return fd.read()
 
 def run_program_on_descriptions(program, departments):
-    program = ''.join(line.lstrip() + '\n' for line in program.splitlines() if line.strip())
+    program = ''.join(line.lstrip() + '\n' for line in program.splitlines() if line.lstrip())
     ast = IR_PARSER.parse(program, 'Program')
     if not ast:
         return None

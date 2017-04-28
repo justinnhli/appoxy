@@ -35,7 +35,7 @@ TextClass = "Number"
           | "Three Digits"
           | "Course Department Name"
           | "Course Department Code";
-CustomText = ( TextChar )+;
+CustomText = ( TextChar )*;
 TextChar = print
          - tab;
 
