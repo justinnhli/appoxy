@@ -119,7 +119,13 @@ def create_location_fn(ast):
 def create_text(ast):
     if ast.descendants('*')[0].term == 'PresetText':
         preset = ast.descendants('PresetText/TextClass')[0].match
-        if preset == 'Course Department Name':
+        if preset == 'Number':
+            return (lambda course: re.search('[0-9]+', course.text).group(0) if re.search('[0-9]+', course.text) else None)
+        elif preset == 'Capital Letter':
+            return (lambda course: re.search('[A-Z]+', course.text).group(0) if re.search('[A-Z]+', course.text) else None)
+        elif preset == 'Three Digits':
+            return (lambda course: re.search('[0-9]{3}', course.text).group(0) if re.search('[0-9]{3}', course.text) else None)
+        elif preset == 'Course Department Name':
             return (lambda course: course.department)
         elif preset == 'Course Department Code':
             return (lambda course: text2code[course.department])
@@ -167,7 +173,7 @@ def create_delete(ast):
 
 def create_replace(ast):
     before, after = (create_text(child) for child in ast.descendants('Text'))
-    return (lambda course: (CourseDescription(course.department, course.number, course.text.replace(before(course), after(course))),))
+    return (lambda course: (CourseDescription(course.department, course.number, course.text.replace(before(course), after(course))),) if before(course) else (course,))
 
 def create_transforms(ast):
     # functions that takes a list and returns a list
