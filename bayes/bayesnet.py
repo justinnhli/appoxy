@@ -112,12 +112,13 @@ class BayesNet:
         for line in self.text:
             if line.startswith("observe "):
                 words = line.split()
-                if words[1] not in self.nodes:
-                    self._error("There is no \"{}\" to be observed.".format(words[1]))
-                if words[3] not in self.nodes[words[1]].values:
-                    self._error("\"{}\" is not a valid observation of \"{}\".".format(words[3], words[1]))
-                observations[words[1]] = words[3]
-                predict = True
+                if len(words) == 4:
+                    if words[1] not in self.nodes:
+                        self._error("There is no \"{}\" to be observed.".format(words[1]))
+                    if words[3] not in self.nodes[words[1]].values:
+                        self._error("\"{}\" is not a valid observation of \"{}\".".format(words[3], words[1]))
+                    observations[words[1]] = words[3]
+                    predict = True
         if "predict" in self.text:
             predict = True
         if predict:
