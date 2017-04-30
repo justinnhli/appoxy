@@ -10,7 +10,7 @@ def my_product(l):
 class Node:
     def __init__(self, name):
         self.name = name
-        self.parents = set()
+        self.parents = []
         self.children = set()
         self.depth = 0
         self.values = []
@@ -136,7 +136,7 @@ class BayesNet:
             parent = self.nodes[parent_name]
             child = self.nodes[child_name]
             parent.children.add(child)
-            child.parents.add(parent)
+            child.parents.append(parent)
     def _parse_CPT(self, node_name):
         cpt_lines = [num for num, line in enumerate(self.text) if line.strip(":") == "cpt for {}".format(node_name)]
         if len(cpt_lines) == 0:
