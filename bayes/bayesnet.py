@@ -43,6 +43,7 @@ class Node:
             prob_table.append(["{:.2f}%".format(float(100 * probs[value])) for value in self.values])
         key_widths = tuple(max(len(row[col]) for row in chain(([parent.name for parent in self.parents],), key_table)) for col in range(len(self.parents)))
         prob_widths = tuple(max(len(row[col]) for row in chain((values_header,), prob_table)) for col in range(len(self.values)))
+        result.append(self.name)
         result.append("".join([
                 "|",
                 "|".join(" {} ".format(col.ljust(key_widths[i])) for i, col in enumerate(parent.name for parent in self.parents)),
@@ -71,6 +72,7 @@ class Node:
         values_header = tuple("P({})".format(value) for value in self.values)
         probs = tuple("{:.2f}%".format(float(100 * self.posterior[value])) for value in self.values)
         prob_widths = tuple(max(len(row[col]) for row in (values_header, probs)) for col in range(len(self.values)))
+        result.append(self.name)
         result.append("".join([
                 "|",
                 "|".join(" {} ".format(col.ljust(prob_widths[i])) for i, col in enumerate(values_header)),
