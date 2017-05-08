@@ -36,6 +36,7 @@ code2text = {
     "LATN": "Latin",
     "LLAS": "Latino/a & Latin American Studies",
     "LING": "Linguistics",
+    "MAC": "Media Arts & Culture",
     "MATH": "Mathematics",
     "MUSC": "Music",
     "MUSA": "Music Applied Study",
