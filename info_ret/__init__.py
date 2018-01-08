@@ -406,5 +406,6 @@ def process():
     result = list([old.text, new.text] for old, new in zip(get_catalog(departments), catalog))
     return jsonify({'data': result})
 
+
 if __name__ == '__main__':
     info_ret.run(debug=True)

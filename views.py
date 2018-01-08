@@ -23,12 +23,14 @@ for module_name in listdir(dirname(realpath(__file__))):
     modules[module_name] = module
     app.register_blueprint(getattr(module, module_name))
 
+
 @app.route('/<sub>/<file>')
 def resources(sub, file):
     if file.split('.')[-1] in ('css', 'js'):
         return send_from_directory(sub, file)
     else:
         return abort(404)
+
 
 @app.route('/')
 def root():
@@ -42,6 +44,7 @@ def root():
         doc = modules[name].__doc__
         applets[name] = Applet(name, url, doc)
     return render_template('index.html', applets=sorted(applets.items()))
+
 
 if __name__ == '__main__':
     app.run(debug=True)

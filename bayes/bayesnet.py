@@ -1,13 +1,16 @@
 from itertools import chain, product
 from fractions import Fraction
 
+
 def my_product(l):
     result = 1
     for e in l:
         result *= e
     return result
 
+
 class Node:
+
     def __init__(self, name):
         self.name = name
         self.parents = []
@@ -18,19 +21,23 @@ class Node:
         self.observation = None
         self.posterior = {}
         self.reset()
+
     def reset(self):
         self.observation = None
         self.posterior = {}
+
     def observe(self, value):
         for v in self.values:
             self.posterior[v] = 0
         self.observation = value
         self.posterior[value] = 1
+
     def is_ancestor(self, node):
         if self == node:
             return True
         else:
             return any(parent.is_ancestor(node) for parent in self.parents)
+
     def cpt_string(self):
         result = []
         key_table = []
@@ -95,9 +102,11 @@ class BayesNet:
             self._parse()
         except SyntaxError:
             return
+
     def _error(self, message):
         self.error = "Error: " + message
         raise SyntaxError(message)
+
     def _parse(self):
         # parse all edges first
         for line in self.text:
@@ -125,6 +134,7 @@ class BayesNet:
             predict = True
         if predict:
             self.infer(observations)
+
     def _parse_edge(self, line):
         nodes = tuple(node.strip() for node in line.split("->"))
         if len(nodes) > 2:
@@ -139,6 +149,7 @@ class BayesNet:
             child = self.nodes[child_name]
             parent.children.add(child)
             child.parents.append(parent)
+
     def _parse_CPT(self, node_name):
         cpt_lines = [num for num, line in enumerate(self.text) if line.strip(":") == "cpt for {}".format(node_name)]
         if len(cpt_lines) == 0:
@@ -170,28 +181,46 @@ class BayesNet:
                 self._error("The CPT for \"{}\" does not contain enough rows.".format(node.name))
             data = row.split()
             if len(data) != len(header_parents) + len(node.values):
-                self._error("Row {} of the CPT for \"{}\" has {} columns than expected from the header".format(line_diff + 1,
+                self._error(
+                    "Row {} of the CPT for \"{}\" has {} columns than expected from the header".format(
+                        line_diff + 1,
                         node.name,
                         ("more" if len(data) > len(header_parents) + len(node.values) else "fewer")))
             key = tuple(zip(header_parents, data[:len(header_parents)]))
             for parent_name, value in key:
                 if value not in self.nodes[parent_name].values:
-                    self._error("\"{}\" is not a valid value of \"{}\" in row {} of the CPT for \"{}\"".format(value, parent_name, line_diff + 1, node.name))
+                    self._error(
+                        "\"{}\" is not a valid value of \"{}\" in row {} of the CPT for \"{}\"".format(
+                            value,
+                            parent_name,
+                            line_diff + 1,
+                            node.name))
             if key in node.cpt:
-                self._error("The probabilities for \"{}\" when ({}) has been specified twice".format(node.name, ", ".join("{} is {}".format(parent, value) for parent, value in key)))
+                self._error(
+                    "The probabilities for \"{}\" when ({}) has been specified twice".format(
+                        node.name,
+                        ", ".join("{} is {}".format(parent, value) for parent, value in key)))
             try:
                 probs = tuple(zip(header_probs, (Fraction(datum) for datum in data[len(header_parents):])))
             except ValueError:
-                self._error("Row {} of the CPT for \"{}\" contains an invalid probability".format(line_diff + 1, node.name))
+                self._error(
+                    "Row {} of the CPT for \"{}\" contains an invalid probability".format(
+                        line_diff + 1,
+                        node.name))
             if not all(0 <= prob[1] <= 1 for prob in probs):
-                self._error("Probabilities must be between 0 and 1 in row {} of the CPT for \"{}\"".format(line_diff + 1, node_name))
+                self._error(
+                    "Probabilities must be between 0 and 1 in row {} of the CPT for \"{}\"".format(
+                        line_diff + 1,
+                        node_name))
             if sum(prob[1] for prob in probs) != 1:
-                self._error("The probabilities of row {} of the CPT for \"{}\" do not add up to 1 ({})".format(
+                self._error(
+                    "The probabilities of row {} of the CPT for \"{}\" do not add up to 1 ({})".format(
                         line_diff + 1,
                         node_name,
                         ("{} = {}".format(" + ".join(str(prob[1]) for prob in probs), sum(prob[1] for prob in probs)))))
             node.cpt.append((key, probs))
         return line_num + num_rows + 1
+
     def _check_dag(self):
         # order nodes topologically for reading CPTs
         level = set(node for node in self.nodes.values() if len(node.parents) == 0)
@@ -206,9 +235,11 @@ class BayesNet:
                     new_level.add(child)
                 visited.add(parent)
             level = new_level
+
     @property
     def has_errors(self):
         return (self.error is not None)
+
     def infer(self, evidence):
         # reset all nodes
         for node in self.nodes.values():
@@ -220,6 +251,7 @@ class BayesNet:
         for node in self.nodes.values():
             if node.name not in evidence:
                 node.posterior = self._infer(node, evidence)
+
     def _infer(self, query, evidence):
         evidence = dict((self.nodes[name], value) for name, value in evidence.items())
         queue = [query,] + list(evidence.keys())
@@ -228,7 +260,10 @@ class BayesNet:
             node = queue.pop(0)
             queue.extend(parent for parent in node.parents if parent not in relevant_nodes)
             relevant_nodes.update(node.parents)
-        unobserved_nodes = sorted(set(node for node in relevant_nodes if node.name != query.name and node not in evidence), key=(lambda n: n.name))
+        unobserved_nodes = sorted(
+            set(node for node in relevant_nodes
+                if node.name != query.name and node not in evidence),
+            key=(lambda n: n.name))
         result = {}
         for value in query.values:
             sigma = 0
@@ -238,7 +273,9 @@ class BayesNet:
                 assignment[query] = value
                 pi = 1
                 for node in relevant_nodes:
-                    key = tuple((parent.name, assignment[parent]) for parent in sorted(node.parents, key=(lambda n: n.name)))
+                    key = tuple(
+                            (parent.name, assignment[parent])
+                            for parent in sorted(node.parents, key=(lambda n: n.name)))
                     pi *= dict(dict((tuple(sorted(key)), value) for key, value in node.cpt)[key])[assignment[node]]
                 sigma += pi
             result[value] = sigma
@@ -248,6 +285,7 @@ class BayesNet:
         for key in result:
             result[key] /= total
         return result
+
     def dot(self):
         result = []
         result.append('digraph {')
