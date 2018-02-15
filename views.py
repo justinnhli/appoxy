@@ -42,6 +42,7 @@ def root():
         name = rule.endpoint.replace('.root', '')
         url = url_for(rule.endpoint)
         doc = modules[name].__doc__
+        doc = doc.strip().splitlines()[0]
         applets[name] = Applet(name, url, doc)
     return render_template('index.html', applets=sorted(applets.items()))
 
