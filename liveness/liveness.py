@@ -4,7 +4,7 @@ from collections import namedtuple, defaultdict
 from os.path import join as join_path, dirname, abspath
 from copy import deepcopy
 
-from pegparse import create_parser_from_file, ASTWalker
+from .pegparse import create_parser_from_file, ASTWalker
 
 EBNF_FILE = join_path(dirname(abspath(__file__)), 'c-like.ebnf')
 
