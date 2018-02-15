@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <title></title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <style>
+            #layout {width:100%;}
+            #src_cell {vertical-align:top; width:30%;}
+            #cfg_cell {text-align:center; width:70%;}
+            #src {height:30em; width:100%;}
+            #cfg svg {max-height:30em;}
+            #usage {text-align:center;}
+            table {border-collapse:collapse; margin:auto auto;}
+            table th, table td {border:solid #000000 1px; padding:5px;}
+            table td {text-align:left;}
+            .noleft {border-left-width:0px;}
+            .noright {border-right-width:0px;}
+            .nobottom {border-bottom-width:0px;}
+            .notop {border-top-width:0px;}
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+    </script>
+    <script src="/js/viz.js">
+    </script>
+    <script>
+            // On load
+            $(function () {
+                var $src = $('#src');
+                var $cfg = $('#cfg');
+                var $usage = $('#usage');
+                var $reachability = $('#reachability');
+                var $liveness = $('#liveness');
+
+                function main() {
+                    loadSource();
+                    if ($src.val().trim() === '') {
+                        var defaultSource = [
+                            'n = 13;',
+                            'i = 0;',
+                            'prime = 1;',
+                            'while (prime && (i < sqrt(n))) {',
+                            '    prime = (n % i == 0);',
+                            '    i += 1;',
+                            '}',
+                            'print(prime);',
+                        ];
+                        $src.val(defaultSource.join('\n'));
+                    }
+                    saveSource();
+
+                    $('#analyze').click(analyze);
+
+                    analyze();
+                }
+
+                function analyze() {
+                    saveSource();
+                    // clear all results
+                    $cfg.empty();
+                    $usage.empty();
+                    $reachability.empty();
+                    $liveness.empty();
+                    // display control flow graph
+                    $.post('/liveness/cfg', $src.val()).done(function(response) {
+                        if (response === 'Syntax Error') {
+                            $cfg.append(response);
+                        } else {
+                            $cfg.append(Viz(response));
+                        }
+                    });
+                    // calculate usage
+                    $.post('/liveness/usage', $src.val()).done(function(response) {
+                        $usage.append(response);
+                    });
+                    // calculate reachability
+                    $.post('/liveness/reachability', $src.val()).done(function(response) {
+                        $reachability.append(response);
+                    });
+                    // calculate liveness
+                    $.post('/liveness/liveness', $src.val()).done(function(response) {
+                        $liveness.append(response);
+                    });
+                }
+
+                function loadSource() {
+                    var hash = deparam(location.hash.substr(1));
+                    if ('source' in hash) {
+                        $src.val(window.atob(hash['source']));
+                    }
+                }
+
+                function saveSource() {
+                    location.hash = param({'source': window.btoa($src.val())});
+                }
+
+                function param(obj) {
+                    return $.param(obj, false);
+                }
+
+                function deparam(str) {
+                    var obj = {};
+                    str.replace(/([^=&]+)=([^&]*)/g, function(m, key, value) {
+                        obj[decodeURIComponent(key)] = decodeURIComponent(value);
+                    });
+                    return obj;
+                }
+
+                main();
+
+            });
+    </script>
+</head>
+<body>
+    <h1 id="site-title">Liveness Analysis Demo (Allen and Cooke, 1976)</h1>
+    <table id="layout" style="border-width:0px;">
+        <tr>
+            <td id="src_cell">
+            <textarea id="src"></textarea><br>
+            <button id="analyze">Analyze</button></td>
+            <td id="cfg_cell">
+                <div id="cfg"></div>
+            </td>
+        </tr>
+    </table>
+    <hr>
+    <h2>Static Information</h2>
+    <div id="usage"></div>
+    <hr>
+    <h2>Reach and Availability Calculations</h2>
+    <div id="reachability"></div>
+    <hr>
+    <h2>Liveness</h2>
+    <div id="liveness"></div>
+</body>
+</html>

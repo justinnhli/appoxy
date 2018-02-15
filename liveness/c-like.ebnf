@@ -1,0 +1,66 @@
+Program = OptSpace ( BasicBlock )? OptSpace ( ControlBlock OptSpace ( BasicBlock )? )* OptSpace;
+
+BasicBlock = Statement OptSpace ( Statement OptSpace )*;
+
+ControlBlock = Branch
+             | Loop;
+
+Branch = IfElse
+       | If;
+If = "if" OptSpace Condition OptSpace "{" OptSpace Program OptSpace "}";
+IfElse = "if" OptSpace Condition OptSpace "{" OptSpace Program OptSpace "}" OptSpace "else" OptSpace "{" OptSpace Program OptSpace "}";
+
+Loop = "while" OptSpace Condition OptSpace "{" Program "}";
+
+Condition = "(" OptSpace Expression OptSpace ")";
+
+Statement = Assignment
+          | ExpressionStatement;
+
+ExpressionStatement = Expression OptSpace ";";
+
+Assignment = Variable OptSpace AssignmentOperator OptSpace Expression OptSpace ";";
+AssignmentOperator = "="
+                   | "+="
+                   | "-="
+                   | "*="
+                   | "/="
+                   | "%=";
+
+Expression = Operand ( OptSpace Operator OptSpace Operand )*;
+ParenExpression = "(" OptSpace Expression OptSpace ")";
+Operand = Atom
+		| ParenExpression;
+
+Operator = "+"
+         | "-"
+         | "*"
+         | "/"
+         | "%"
+         | "<="
+         | "<"
+         | ">="
+         | ">"
+         | "!="
+         | "=="
+         | "&&"
+         | "||";
+
+Atom = FunctionCall
+     | Variable
+     | Integer;
+
+FunctionCall = Variable OptSpace "(" OptSpace ( Expression ( OptSpace "," OptSpace Expression )* OptSpace )? ")";
+
+Variable = Name
+         - "if"
+         - "while";
+Name = ( lower )+;
+
+Integer = ( digit )+;
+
+OptSpace = ( Whitespace )*;
+Whitespace = " "
+           | tab
+           | newline;
+
