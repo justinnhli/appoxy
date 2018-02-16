@@ -1,6 +1,4 @@
-'''
-Bayesian network editor and calculator
-'''
+"""Bayesian network editor and calculator."""
 
 from flask import Blueprint, send_from_directory, request
 

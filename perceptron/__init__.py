@@ -1,6 +1,4 @@
-'''
-Graphical explanation of perceptron training
-'''
+"""Graphical explanation of perceptron training."""
 
 from flask import Blueprint, send_from_directory
 

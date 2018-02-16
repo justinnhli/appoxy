@@ -1,6 +1,4 @@
-'''
-An ELIZA style chatbot, with editor
-'''
+"""An ELIZA style chatbot, with editor."""
 
 from flask import Blueprint, send_from_directory
 

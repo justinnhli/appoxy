@@ -1,6 +1,4 @@
-'''
-Problem space demo on the water jug puzzle
-'''
+"""Problem space demo on the water jug puzzle."""
 
 from os.path import dirname
 

@@ -1,6 +1,4 @@
-'''
-A web app to create a Jeopardy! board
-'''
+"""Jeopardy! board creator and player."""
 
 from os.path import dirname
 

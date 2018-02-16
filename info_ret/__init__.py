@@ -1,13 +1,4 @@
-#!/usr/bin/env python3
-"""A web app for interactive GUI-based information extraction.
-
-To run, you must have the Flask and gunicorn Python modules installed.
-
-A live demo of this app can be found at
-
-    https://eaai2018-prereq-extraction.herokuapp.com/
-
-"""
+"""A web app for interactive GUI-based information extraction."""
 
 import re
 from functools import total_ordering
