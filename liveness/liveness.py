@@ -62,19 +62,8 @@ class DataflowWalker(ASTWalker):
         return CodeBlock(condition, [condition])
 
     def parse_Condition(self, ast, results):
-        used = set()
-        has_nested = False
-        for result in results:
-            if isinstance(result, LineOfCode):
-                used |= result.used
-                has_nested = True
-            else:
-                used.add(result)
-        if has_nested:
-            line = LineOfCode(self.line_num - 1, ast.column, ast.match, None, used)
-        else:
-            line = LineOfCode(self.line_num, ast.column, ast.match, None, used)
-            self.line_num += 1
+        line = LineOfCode(self.line_num, ast.column, ast.match, None, set(results))
+        self.line_num += 1
         self.lines[line.line_num] = line
         return line
 
@@ -88,13 +77,13 @@ class DataflowWalker(ASTWalker):
             used = set(results)
         else:
             used = set(results[1:])
-        line = LineOfCode(self.line_num, ast.column, ast.match, results[0], set(used))
+        line = LineOfCode(self.line_num, ast.column, ast.match, results[0], used)
         self.line_num += 1
         self.lines[line.line_num] = line
         return line
 
-    def parse_FunctionCall(self, ast, results):
-        line = LineOfCode(self.line_num, ast.column, ast.match, None, set(results[1:]))
+    def parse_ExpressionStatement(self, ast, results):
+        line = LineOfCode(self.line_num, ast.column, ast.match, None, set(results))
         self.line_num += 1
         self.lines[line.line_num] = line
         return line

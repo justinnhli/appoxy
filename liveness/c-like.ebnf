@@ -50,7 +50,10 @@ Atom = FunctionCall
      | Variable
      | Integer;
 
-FunctionCall = Variable OptSpace "(" OptSpace ( Expression ( OptSpace "," OptSpace Expression )* OptSpace )? ")";
+FunctionCall = Function OptSpace "(" OptSpace ( Expression ( OptSpace "," OptSpace Expression )* OptSpace )? ")";
+Function = Name
+         - "if"
+		 - "while";
 
 Variable = Name
          - "if"
