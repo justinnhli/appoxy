@@ -9,6 +9,7 @@ from .pegparse import create_parser_from_file, ASTWalker
 EBNF_FILE = join_path(dirname(abspath(__file__)), 'c-like.ebnf')
 
 CodeBlock = namedtuple('CodeBlock', ['entrance', 'exits'])
+LivenessAnalysis = namedtuple('LivenessAnalysis', ['source', 'lines', 'edges'])
 
 
 class LineOfCode:
@@ -28,11 +29,19 @@ class LineOfCode:
 class DataflowWalker(ASTWalker):
 
     def __init__(self):
-        parser = create_parser_from_file(EBNF_FILE)
-        super().__init__(parser, 'Program')
+        super().__init__(create_parser_from_file(EBNF_FILE), 'Program')
+        self._reset()
+
+    def _reset(self):
         self.edges = []
         self.lines = {}
         self.line_num = 1
+
+    def parse(self, text, term=None):
+        super().parse(text, term)
+        result = LivenessAnalysis(text, self.lines, self.edges)
+        self._reset()
+        return result
 
     def parse_Program(self, ast, results):
         for before, after in zip(results[:-1], results[1:]):
@@ -91,76 +100,56 @@ class DataflowWalker(ASTWalker):
     def parse_Variable(self, ast, results):
         return ast.match
 
-def upwards_exposure(parser):
+
+def control_flow_graph(analysis):
+    lines = []
+    lines.append('digraph {')
+    for line_num, line in sorted(analysis.lines.items()):
+        lines.append('    {} [label="{}: {}"]'.format(line_num, line_num, line.source))
+    for src, dest in analysis.edges:
+        lines.append('    {} -> {}'.format(src, dest))
+    lines.append('}')
+    return '\n'.join(lines)
+
+
+def upwards_exposure(analysis):
     upwards = defaultdict(set)
-    for line_num, line in sorted(parser.lines.items(), reverse=True):
+    for line_num, line in sorted(analysis.lines.items(), reverse=True):
         upwards[line_num] |= line.used
     changed = True
     while changed:
         changed = False
-        for line_num, line in sorted(parser.lines.items(), reverse=True):
+        for line_num, line in sorted(analysis.lines.items(), reverse=True):
             for var in upwards[line_num]:
-                for src, dest in parser.edges:
-                    if dest == line_num and var != parser.lines[src].var and var not in upwards[src]:
+                for src, dest in analysis.edges:
+                    if dest == line_num and var != analysis.lines[src].var and var not in upwards[src]:
                         upwards[src].add(var)
                         changed = True
     return upwards
 
-def local_definitions(parser):
+
+def local_definitions(analysis):
     db = defaultdict(set)
-    for line_num, line in parser.lines.items():
+    for line_num, line in analysis.lines.items():
         if line.var:
             db[line_num] = set([line.var_name])
     return db
 
-def available_definitions(parser):
+
+def available_definitions(analysis):
     variables = defaultdict(set)
-    for line in parser.lines.values():
+    for line in analysis.lines.values():
         if line.var:
             variables[line.var].add(line.var_name)
     pb = defaultdict(set)
-    for line_num, line in parser.lines.items():
-        pb[line_num] = set.union(*(values for key, values in variables.items() if key != line.var))
+    for line_num, line in analysis.lines.items():
+        pb[line_num] = set.union(set(), *(values for key, values in variables.items() if key != line.var))
     return pb
 
 
-def reachability_old(source):
-    parser = DataflowWalker()
-    parser.parse(source)
-    u = upwards_exposure(parser)
-    db = local_definitions(parser)
-    pb = available_definitions(parser)
-    r = defaultdict(set)
-    a = defaultdict(set)
-    changed = True
-    iteration = 0
-    while changed:
-        changed = False
-        iteration += 1
-        for line_num in parser.lines.keys():
-            # update a
-            old_a = a[line_num]
-            a[line_num] = db[line_num].union(r[line_num].intersection(pb[line_num]))
-            if old_a != a[line_num]:
-                changed = True
-            # update r
-            old_r = r[line_num]
-            new_r = set()
-            for pred, succ in parser.edges:
-                if succ == line_num:
-                    new_r |= a[pred]
-            r[line_num] = new_r
-            if old_r != new_r:
-                changed = True
-    return r, a
-        
-
-def reachability(source):
-    parser = DataflowWalker()
-    parser.parse(source)
-    u = upwards_exposure(parser)
-    db = local_definitions(parser)
-    pb = available_definitions(parser)
+def reachability(analysis):
+    db = local_definitions(analysis)
+    pb = available_definitions(analysis)
     r_s = [defaultdict(set)]
     a_s = [defaultdict(set)]
     changed = True
@@ -170,7 +159,7 @@ def reachability(source):
         r = deepcopy(r_s[-1])
         a = deepcopy(a_s[-1])
         iteration += 1
-        for line_num in parser.lines.keys():
+        for line_num in analysis.lines.keys():
             # update a
             old_a = a[line_num]
             a[line_num] = db[line_num].union(r[line_num].intersection(pb[line_num]))
@@ -179,7 +168,7 @@ def reachability(source):
             # update r
             old_r = r[line_num]
             new_r = set()
-            for pred, succ in parser.edges:
+            for pred, succ in analysis.edges:
                 if succ == line_num:
                     new_r |= a[pred]
             r[line_num] = new_r
@@ -190,30 +179,18 @@ def reachability(source):
             a_s.append(a)
     return list(zip(r_s, a_s))
 
-def control_flow_graph(source):
-    parser = DataflowWalker()
-    parser.parse(source)
-    lines = []
-    lines.append('digraph {')
-    for line_num, line in sorted(parser.lines.items()):
-        lines.append('    {} [label="{}: {}"]'.format(line_num, line_num, line.source))
-    for src, dest in parser.edges:
-        lines.append('    {} -> {}'.format(src, dest))
-    lines.append('}')
-    return '\n'.join(lines)
 
-def liveness(source):
-    parser = DataflowWalker()
-    parser.parse(source)
-    u = upwards_exposure(parser)
-    r, _ = reachability(source)[-1]
+def liveness(analysis):
+    u = upwards_exposure(analysis)
+    r, _ = reachability(analysis)[-1]
     l = defaultdict(set)
-    for line_num in sorted(parser.lines.keys()):
+    for line_num in sorted(analysis.lines.keys()):
         for reachable_var in r[line_num]:
             for exposed_var in u[line_num]:
                 if reachable_var.startswith(exposed_var + '_'):
                     l[line_num].add(reachable_var)
     return l
+
 
 def main():
     import sys
