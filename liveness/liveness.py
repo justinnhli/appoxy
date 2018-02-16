@@ -152,17 +152,6 @@ def reachability_old(source):
             r[line_num] = new_r
             if old_r != new_r:
                 changed = True
-        '''
-        print(20 * '=')
-        print(iteration)
-        print()
-        print('R:')
-        print('\n'.join('{}: {}'.format(k, v) for k, v in sorted(r.items())))
-        print()
-        print('A:')
-        print('\n'.join('{}: {}'.format(k, v) for k, v in sorted(a.items())))
-        print()
-        '''
     return r, a
         
 
@@ -199,12 +188,6 @@ def reachability(source):
         if changed:
             r_s.append(r)
             a_s.append(a)
-    l = defaultdict(set)
-    for line_num in sorted(parser.lines.keys()):
-        for reachable_var in r[line_num]:
-            for exposed_var in u[line_num]:
-                if reachable_var.startswith(exposed_var + '_'):
-                    l[line_num].add(reachable_var)
     return list(zip(r_s, a_s))
 
 def control_flow_graph(source):
@@ -231,12 +214,6 @@ def liveness(source):
                 if reachable_var.startswith(exposed_var + '_'):
                     l[line_num].add(reachable_var)
     return l
-    '''
-    print(20 * '=')
-    print('L:')
-    print('\n'.join('{}: {}'.format(k, v) for k, v in sorted(l.items())))
-    print()
-    '''
 
 def main():
     import sys
