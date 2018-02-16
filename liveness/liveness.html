@@ -2,10 +2,11 @@
 <html>
 <head>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-    <title></title>
+    <title>Liveness Analysis Demo</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <style>
             #layout {width:100%;}
+            #layout th, #layout td {border-width:0px;}
             #src_cell {vertical-align:top; width:30%;}
             #cfg_cell {text-align:center; width:70%;}
             #src {height:30em; width:100%;}
@@ -14,10 +15,8 @@
             table {border-collapse:collapse; margin:auto auto;}
             table th, table td {border:solid #000000 1px; padding:5px;}
             table td {text-align:left;}
-            .noleft {border-left-width:0px;}
-            .noright {border-right-width:0px;}
-            .nobottom {border-bottom-width:0px;}
-            .notop {border-top-width:0px;}
+            .iteration {border-left-width:0px; border-right-width:0px; border-top-width:0px; text-align:left;}
+            .separator {border-left-width:0px; border-right-width:0px; border-bottom-width:0px;}
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
     </script>
@@ -112,7 +111,7 @@
     </script>
 </head>
 <body>
-    <h1 id="site-title">Liveness Analysis Demo (Allen and Cooke, 1976)</h1>
+    <h1 id="site-title">Liveness Analysis Demo (<a href="https://dl.acm.org/citation.cfm?id=360025">Allen and Cooke, 1976</a>)</h1>
     <table id="layout" style="border-width:0px;">
         <tr>
             <td id="src_cell">
