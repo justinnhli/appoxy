@@ -83,7 +83,7 @@
 
                 function loadSource() {
                     var hash = deparam(location.hash.substr(1));
-                    if (hash["source"] === undefined) {
+                    if (hash["source"] !== undefined) {
                         $src.val(window.atob(hash["source"]));
                     }
                 }

@@ -40,10 +40,9 @@
 
                 function loadNetwork() {
                     var hash = deparam(location.hash.substr(1));
-                    if (hash["network"] === undefined) {
+                    if (hash["network"] !== undefined) {
                         $bayes.val(window.atob(hash["network"]));
                     }
-                    draw();
                 }
 
                 function saveNetwork(network) {
