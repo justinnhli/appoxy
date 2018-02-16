@@ -9,14 +9,15 @@
         <script>
             // On load
             $(function () {
-                var $bayes = $('#bayes');
-                var $rhs = $('#rhs');
+                "use strict";
+                var $bayes = $("#bayes");
+                var $rhs = $("#rhs");
 
                 function draw() {
-                    var network = $bayes.val()
-                    $.post('/bayes/parse', network).done(function(response) {
+                    var network = $bayes.val();
+                    $.post("/bayes/parse", network).done(function(response) {
                         $rhs.empty();
-                        if (response.substring(0, 5) === 'Error') {
+                        if (response.substring(0, 5) === "Error") {
                             $rhs.append(response);
                         } else {
                             $rhs.append(Viz(response));
@@ -39,23 +40,23 @@
 
                 function loadNetwork() {
                     var hash = deparam(location.hash.substr(1));
-                    if ('network' in hash) {
-                        $bayes.val(window.atob(hash['network']));
+                    if (hash["network"] === undefined) {
+                        $bayes.val(window.atob(hash["network"]));
                     }
                     draw();
                 }
 
                 function saveNetwork(network) {
-                    location.hash = param({'network': window.btoa(network)});
+                    location.hash = param({"network": window.btoa(network)});
                 }
 
                 function main() {
                     loadNetwork();
 
-                    $('#drawButton').click(function () {
+                    $("#drawButton").click(function () {
                         draw();
                     });
-                    $(window).on('hashchange', function() {
+                    $(window).on("hashchange", function() {
                         loadNetwork();
                     });
                 }

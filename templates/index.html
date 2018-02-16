@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-	<title>AppOxy</title>
+    <title>AppOxy</title>
 </head>
 <body>
-	<table>
-		{% for name, applet in applets %}
-		<tr>
-			<td><a href="{{ applet.url }}">{{ name }}</a></td>
-			<td>{{ applet.doc }}</td>
-		</tr>
-		{% endfor %}
-	</ul>
+    <table>
+        {% for name, applet in applets %}
+        <tr>
+            <td><a href="{{ applet.url }}">{{ name }}</a></td>
+            <td>{{ applet.doc }}</td>
+        </tr>
+        {% endfor %}
+    </ul>
 </body>
 </html>

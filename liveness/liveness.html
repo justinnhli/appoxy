@@ -18,37 +18,36 @@
             .iteration {border-left-width:0px; border-right-width:0px; border-top-width:0px; text-align:left;}
             .separator {border-left-width:0px; border-right-width:0px; border-bottom-width:0px;}
     </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
-    </script>
-    <script src="/js/viz.js">
-    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/js/viz.js"></script>
     <script>
             // On load
             $(function () {
-                var $src = $('#src');
-                var $cfg = $('#cfg');
-                var $usage = $('#usage');
-                var $reachability = $('#reachability');
-                var $liveness = $('#liveness');
+                "use strict";
+                var $src = $("#src");
+                var $cfg = $("#cfg");
+                var $usage = $("#usage");
+                var $reachability = $("#reachability");
+                var $liveness = $("#liveness");
 
                 function main() {
                     loadSource();
-                    if ($src.val().trim() === '') {
+                    if ($src.val().trim() === "") {
                         var defaultSource = [
-                            'n = 13;',
-                            'i = 0;',
-                            'prime = 1;',
-                            'while (prime && (i < sqrt(n))) {',
-                            '    prime = (n % i == 0);',
-                            '    i += 1;',
-                            '}',
-                            'print(prime);',
+                            "n = 13;",
+                            "i = 0;",
+                            "prime = 1;",
+                            "while (prime && (i < sqrt(n))) {",
+                            "    prime = (n % i == 0);",
+                            "    i += 1;",
+                            "}",
+                            "print(prime);"
                         ];
-                        $src.val(defaultSource.join('\n'));
+                        $src.val(defaultSource.join("\n"));
                     }
                     saveSource();
 
-                    $('#analyze').click(analyze);
+                    $("#analyze").click(analyze);
 
                     analyze();
                 }
@@ -61,36 +60,36 @@
                     $reachability.empty();
                     $liveness.empty();
                     // display control flow graph
-                    $.post('/liveness/cfg', $src.val()).done(function(response) {
-                        if (response === 'Syntax Error') {
+                    $.post("/liveness/cfg", $src.val()).done(function(response) {
+                        if (response === "Syntax Error") {
                             $cfg.append(response);
                         } else {
                             $cfg.append(Viz(response));
                         }
                     });
                     // calculate usage
-                    $.post('/liveness/usage', $src.val()).done(function(response) {
+                    $.post("/liveness/usage", $src.val()).done(function(response) {
                         $usage.append(response);
                     });
                     // calculate reachability
-                    $.post('/liveness/reachability', $src.val()).done(function(response) {
+                    $.post("/liveness/reachability", $src.val()).done(function(response) {
                         $reachability.append(response);
                     });
                     // calculate liveness
-                    $.post('/liveness/liveness', $src.val()).done(function(response) {
+                    $.post("/liveness/liveness", $src.val()).done(function(response) {
                         $liveness.append(response);
                     });
                 }
 
                 function loadSource() {
                     var hash = deparam(location.hash.substr(1));
-                    if ('source' in hash) {
-                        $src.val(window.atob(hash['source']));
+                    if (hash["source"] === undefined) {
+                        $src.val(window.atob(hash["source"]));
                     }
                 }
 
                 function saveSource() {
-                    location.hash = param({'source': window.btoa($src.val())});
+                    location.hash = param({"source": window.btoa($src.val())});
                 }
 
                 function param(obj) {
