@@ -9,7 +9,7 @@
             #layout th, #layout td {border-width:0px;}
             #src_cell {vertical-align:top; width:30%;}
             #cfg_cell {text-align:center; width:70%;}
-            #src {height:30em; width:100%;}
+            #src {height:20em; width:100%;}
             #cfg svg {max-height:30em;}
             #usage {text-align:center;}
             table {border-collapse:collapse; margin:auto auto;}
@@ -115,8 +115,26 @@
     <table id="layout" style="border-width:0px;">
         <tr>
             <td id="src_cell">
-            <textarea id="src"></textarea><br>
-            <button id="analyze">Analyze</button></td>
+                <p>
+                    <strong>Supported syntax</strong>:
+                    non-negative integer values;
+                    lower-case variables and functions;
+                    numeric and boolean operators;
+                    braced <code>if</code>, <code>if</code>-<code>else</code>, and <code>while</code>.
+                </p>
+                <p>
+                    <strong>Unsupported syntax</strong>:
+                    string and decimal values;
+                    negation (<code>-</code>);
+                    not (<code>!</code>);
+                    bit operators;
+                    <code>else if</code>, <code>for</code>, <code>do</code>-<code>while</code>;
+                    <code>break</code>, <code>continue</code>.
+                </p>
+                <textarea id="src"></textarea><br>
+                <button id="analyze">Analyze</button><br>
+            </td>
+
             <td id="cfg_cell">
                 <div id="cfg"></div>
             </td>
