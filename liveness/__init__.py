@@ -20,8 +20,8 @@ def root():
 @liveness.route('/cfg', methods=['POST'])
 def draw_cfg():
     source = request.get_data(as_text=True)
-    analysis = DataflowWalker().parse(source)
     try:
+        analysis = DataflowWalker().parse(source)
         return control_flow_graph(analysis)
     except SyntaxError:
         return 'Syntax Error'
