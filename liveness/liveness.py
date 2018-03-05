@@ -196,8 +196,8 @@ def main():
     import sys
     with open(sys.argv[1]) as fd:
         source = fd.read()
-        print(control_flow_graph(source))
-    reachability(sys.argv[1])
+    analysis = DataflowWalker().parse(source)
+    print(control_flow_graph(analysis))
 
 
 if __name__ == '__main__':
