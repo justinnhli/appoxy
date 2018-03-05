@@ -54,13 +54,13 @@ class DataflowWalker(ASTWalker):
         condition.source = 'if ' + condition.source
         self.edges.append([condition.line_num, true_block.entrance.line_num])
         self.edges.append([condition.line_num, false_block.entrance.line_num])
-        return CodeBlock(condition, [true_block.entrance, false_block.entrance])
+        return CodeBlock(condition, [*true_block.exits, *false_block.exits])
 
     def parse_If(self, ast, results):
         condition, true_block = results
         condition.source = 'if ' + condition.source
         self.edges.append([condition.line_num, true_block.entrance.line_num])
-        return CodeBlock(condition, [condition, true_block.entrance])
+        return CodeBlock(condition, [condition, *true_block.exits])
 
     def parse_Loop(self, ast, results):
         condition, body = results
