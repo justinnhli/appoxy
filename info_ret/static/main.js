@@ -297,9 +297,9 @@ $(function () {
     function add_transform(operation) {
         var list_item = $("<li></li>");
         var operation_specifier = create_operation_specifier();
-        list_item.append($("<div class="transform"></div>").append(operation_specifier))
+        list_item.append($("<div class=\"transform\"></div>").append(operation_specifier))
                  .append($("<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>"))
-                 .append($("<span class="remove-transform">X</span>").on("click", remove_transform_handler));
+                 .append($("<span class=\"remove-transform\">X</span>").on("click", remove_transform_handler));
         operation_specifier.val(operation).trigger("change");
         $("#transforms").append(list_item);
         return list_item;
