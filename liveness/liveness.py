@@ -159,13 +159,14 @@ def reachability(analysis):
         r = deepcopy(r_s[-1])
         a = deepcopy(a_s[-1])
         iteration += 1
+        # update a
         for line_num in analysis.lines.keys():
-            # update a
             old_a = a[line_num]
             a[line_num] = db[line_num].union(r[line_num].intersection(pb[line_num]))
             if old_a != a[line_num]:
                 changed = True
-            # update r
+        # update r
+        for line_num in analysis.lines.keys():
             old_r = r[line_num]
             new_r = set()
             for pred, succ in analysis.edges:
