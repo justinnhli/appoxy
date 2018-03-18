@@ -30,19 +30,25 @@ def draw_cfg():
 @liveness.route('/usage', methods=['POST'])
 def generate_usage():
     source = request.get_data(as_text=True).rstrip()
-    analysis = DataflowWalker().parse(source)
+    try:
+        analysis = DataflowWalker().parse(source)
+    except SyntaxError:
+        return '<p class="center">Syntax Error</p>'
     u = upwards_exposure(analysis)
     db = local_definitions(analysis)
     pb = available_definitions(analysis)
-    return '<table>' + create_html_table_rows(analysis, ['U', 'DB', 'PB'], [u, db, pb]) + '</table>'
+    return '<table class="center">' + create_html_table_rows(analysis, ['U', 'DB', 'PB'], [u, db, pb]) + '</table>'
 
 
 @liveness.route('/reachability', methods=['POST'])
 def generate_reachability():
     source = request.get_data(as_text=True).rstrip()
-    analysis = DataflowWalker().parse(source)
+    try:
+        analysis = DataflowWalker().parse(source)
+    except SyntaxError:
+        return '<p class="center">Syntax Error</p>'
     html = []
-    html.append('<table>')
+    html.append('<table class="center">')
     for i, (r, a) in enumerate(reachability(analysis)):
         html.append('<tr><th colspan="4" class="iteration">Iteration {}</th></tr>'.format(i))
         html.append(create_html_table_rows(analysis, ['A', 'R'], [a, r]))
@@ -54,11 +60,14 @@ def generate_reachability():
 @liveness.route('/liveness', methods=['POST'])
 def generate_liveness():
     source = request.get_data(as_text=True).rstrip()
-    analysis = DataflowWalker().parse(source)
+    try:
+        analysis = DataflowWalker().parse(source)
+    except SyntaxError:
+        return '<p class="center">Syntax Error</p>'
     u = upwards_exposure(analysis)
     r, _ = reachability(analysis)[-1]
     l = calculate_liveness(analysis)
-    return '<table>' + create_html_table_rows(analysis, ['R', 'U', 'L'], [r, u, l]) + '</table>'
+    return '<table class="center">' + create_html_table_rows(analysis, ['R', 'U', 'L'], [r, u, l]) + '</table>'
 
 
 def htmlize_var(var):
