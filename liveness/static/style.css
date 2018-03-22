@@ -1,0 +1,13 @@
+#layout {width:100%;}
+#layout th, #layout td {border-width:0px;}
+#src_cell {vertical-align:top; width:30%;}
+#cfg_cell {text-align:center; width:70%;}
+#src {height:20em; width:100%;}
+#cfg svg {max-height:30em;}
+#usage {text-align:center;}
+.center {display:table; margin:auto auto;}
+table {border-collapse:collapse;}
+table th, table td {border:solid #000000 1px; padding:5px;}
+table td {text-align:left;}
+.iteration {border-left-width:0px; border-right-width:0px; border-top-width:0px; text-align:left;}
+.separator {border-left-width:0px; border-right-width:0px; border-bottom-width:0px;}

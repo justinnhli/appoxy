@@ -3,11 +3,11 @@
 from collections import namedtuple
 from importlib import import_module
 from os import listdir
-from os.path import dirname, isdir, realpath
+from os.path import dirname, isdir, realpath, join as join_path
 
 from flask import abort, Flask, render_template, send_from_directory, url_for
 
-IGNORE_DIRS = ('templates', 'css', 'js')
+IGNORE_DIRS = ['static', 'templates']
 
 app = Flask(__name__)
 
@@ -24,10 +24,18 @@ for module_name in listdir(dirname(realpath(__file__))):
     app.register_blueprint(getattr(module, module_name))
 
 
-@app.route('/<sub>/<file>')
-def resources(sub, file):
-    if file.split('.')[-1] in ('css', 'js'):
-        return send_from_directory(sub, file)
+@app.route('/static/<filename>')
+def resources(filename):
+    if filename.split('.')[-1] in ('css', 'js'):
+        return send_from_directory('static', filename)
+    else:
+        return abort(404)
+
+
+@app.route('/<app>/static/<filename>')
+def get_app_resource(app, filename):
+    if filename.split('.')[-1] in ('css', 'js'):
+        return send_from_directory(join_path(app, 'static'), filename)
     else:
         return abort(404)
 
@@ -39,7 +47,7 @@ def root():
     for rule in app.url_map.iter_rules():
         if not rule.endpoint.endswith('.root'):
             continue
-        name = rule.endpoint.replace('.root', '')
+        name = rule.endpoint.replace('.root', '').split('.')[0]
         url = url_for(rule.endpoint)
         doc = modules[name].__doc__
         doc = doc.strip().splitlines()[0]
