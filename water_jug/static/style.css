@@ -1,0 +1,8 @@
+body {text-align:center;}
+div {padding:1em;}
+#ruletable {border-collapse:collapse; width:100%;}
+#ruletable tr {border:1px solid #000000;}
+#ruletable tr td {padding:1em; text-align:left; vertical-align:top; width:50%;}
+input[type=textbox] {max-width:3em;}
+textarea {min-height:15em; width:100%;}
+#stderr {display:none;}
