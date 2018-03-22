@@ -7,7 +7,7 @@ from os.path import dirname, isdir, realpath, join as join_path
 
 from flask import abort, Flask, render_template, send_from_directory, url_for
 
-IGNORE_DIRS = ['static', 'templates']
+IGNORE_DIRS = ['blueprint_template', 'static', 'templates']
 
 app = Flask(__name__)
 
