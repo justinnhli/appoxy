@@ -44,7 +44,7 @@ $(function () {
                 }
             } else if (line) {
                 if (question !== "" || answer !== "") {
-                    $error.append($("<p>You seem to have a question without an answer in the "" + category + "" category.</p>"));
+                    $error.append($("<p>You seem to have a question without an answer in the \"" + category + "\" category.</p>"));
                     hasErrors = true;
                 }
                 category = line;
@@ -64,7 +64,7 @@ $(function () {
             if (numQuestions === -1) {
                 numQuestions = questions[category].length;
             } else if (numQuestions !== questions[category].length) {
-                $error.append($("<p>The "" + category + "" category seems to have " + numQuestions + " questions, when the first category has " + questions[category].length + ".<p>"));
+                $error.append($("<p>The \"" + category + "\" category seems to have " + numQuestions + " questions, when the first category has " + questions[category].length + ".<p>"));
                 hasErrors = true;
             }
         }
@@ -80,7 +80,7 @@ $(function () {
 
     function showBoard() {
         var html = "";
-        html += "<table id="grid">";
+        html += "<table id=\"grid\">";
         // create board header
         html += "<tr>";
         for (var i = 0; i < categories.length; i++) {
@@ -92,7 +92,7 @@ $(function () {
             html += "<tr>";
             for (var col = 0; col < categories.length; col++) {
                 var category = categories[col];
-                html += "<td id="board_" + questions[category][row].coord + "">$" + (row + 1) * 100 + "</td>";
+                html += "<td id=\"board_" + questions[category][row].coord + "\">$" + (row + 1) * 100 + "</td>";
             }
             html += "</tr>";
         }
@@ -100,7 +100,7 @@ $(function () {
 
         $board.empty();
         $board.append($(html));
-        $board.append($("<p></p><p><span id="end">X</span></p>"));
+        $board.append($("<p></p><p><span id=\"end\">X</span></p>"));
         $("#grid td").css({cursor: "pointer"}).on("click", boardOnClick);
         $("#board p span").on("click", endGame);
         $input.fadeOut(FADE_OUT_TIME);
@@ -122,7 +122,7 @@ $(function () {
     }
 
     function showQuestion(question) {
-        $question.html("<span id="question_" + question.coord + "">" + question.question.toUpperCase() + "</span>");
+        $question.html("<span id=\"question_" + question.coord + "\">" + question.question.toUpperCase() + "</span>");
         $board.fadeOut(FADE_OUT_TIME);
         $question.fadeIn(FADE_IN_TIME);
         $("#question span").css("cursor", "pointer").on("click", questionOnClick);
