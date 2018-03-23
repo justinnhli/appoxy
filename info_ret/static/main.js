@@ -369,7 +369,7 @@ $(function () {
         select += "<select>";
         select += "    <option value=\"any-digit\">Groups of Digits</option>";
         select += "    <option value=\"lower-case\">Groups of Lower-case Letter</option>";
-        select += "    <option value=\"upper-case\">Groups Upper-case Letter</option>";
+        select += "    <option value=\"upper-case\">Groups of Upper-case Letter</option>";
         select += "    <option value=\"three-digits\">Three Digits</option>";
         select += "    <option value=\"dept-name\">Course Department Name</option>";
         select += "    <option value=\"dept-code\">Course Department Code</option>";
