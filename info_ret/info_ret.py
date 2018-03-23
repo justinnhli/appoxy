@@ -57,7 +57,6 @@ NAME2CODE = dict((text, code) for code, text in CODE2NAME.items())
 
 @total_ordering
 class CourseDescription:
-
     """A class to represent a course's catalog description
 
     Attributes:

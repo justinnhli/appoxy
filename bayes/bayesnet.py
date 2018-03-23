@@ -48,32 +48,51 @@ class Node:
             probs = dict(probs)
             key_table.append(tuple(key[parent.name] for parent in self.parents))
             prob_table.append(["{:.2f}%".format(float(100 * probs[value])) for value in self.values])
-        key_widths = tuple(max(len(row[col]) for row in chain(([parent.name for parent in self.parents],), key_table)) for col in range(len(self.parents)))
-        prob_widths = tuple(max(len(row[col]) for row in chain((values_header,), prob_table)) for col in range(len(self.values)))
+        key_widths = tuple(
+            max(len(row[col]) for row in chain(([parent.name for parent in self.parents], ), key_table))
+            for col in range(len(self.parents))
+        )
+        prob_widths = tuple(
+            max(len(row[col]) for row in chain((values_header, ), prob_table))
+            for col in range(len(self.values))
+        )
         result.append(self.name)
         result.append("".join([
-                "|",
-                "|".join(" {} ".format(col.ljust(key_widths[i])) for i, col in enumerate(parent.name for parent in self.parents)),
-                "||",
-                "|".join(" {} ".format(col.ljust(prob_widths[i])) for i, col in enumerate(values_header)),
-                "|",
+            "|",
+            "|".join(
+                " {} ".format(col.ljust(key_widths[i]))
+                for i, col in enumerate(parent.name for parent in self.parents)
+            ),
+            "||",
+            "|".join(
+                " {} ".format(col.ljust(prob_widths[i]))
+                for i, col in enumerate(values_header)
+            ),
+            "|",
         ]))
         result.append("".join([
-                "|",
-                "|".join((width + 2) * "=" for width in key_widths),
-                "||",
-                "|".join((width + 2) * "=" for width in prob_widths),
-                "|",
+            "|",
+            "|".join((width + 2) * "=" for width in key_widths),
+            "||",
+            "|".join((width + 2) * "=" for width in prob_widths),
+            "|",
         ]))
         for keys, probs in zip(key_table, prob_table):
             result.append("".join([
-                    "|",
-                    "|".join(" {} ".format(col.ljust(key_widths[i])) for i, col in enumerate(keys)),
-                    "||",
-                    "|".join(" {} ".format(col.ljust(prob_widths[i])) for i, col in enumerate(probs)),
-                    "|",
+                "|",
+                "|".join(
+                    " {} ".format(col.ljust(key_widths[i]))
+                    for i, col in enumerate(keys)
+                ),
+                "||",
+                "|".join(
+                    " {} ".format(col.ljust(prob_widths[i]))
+                    for i, col in enumerate(probs)
+                ),
+                "|",
             ]))
         return "\n".join(result)
+
     def posterior_string(self):
         result = []
         values_header = tuple("P({})".format(value) for value in self.values)
@@ -81,19 +100,27 @@ class Node:
         prob_widths = tuple(max(len(row[col]) for row in (values_header, probs)) for col in range(len(self.values)))
         result.append(self.name)
         result.append("".join([
-                "|",
-                "|".join(" {} ".format(col.ljust(prob_widths[i])) for i, col in enumerate(values_header)),
-                "|",
+            "|",
+            "|".join(
+                " {} ".format(col.ljust(prob_widths[i]))
+                for i, col in enumerate(values_header)
+            ),
+            "|",
         ]))
         result.append("".join([
-                "|",
-                "|".join((width + 2) * "=" for width in prob_widths),
-                "|",
+            "|",
+            "|".join((width + 2) * "=" for width in prob_widths),
+            "|",
         ]))
-        result.append("|{}|".format("|".join(" {} ".format(col.ljust(prob_widths[i])) for i, col in enumerate(probs))))
+        result.append(
+            "|{}|".format("|".join(" {} ".format(col.ljust(prob_widths[i]))
+            for i, col in enumerate(probs)))
+        )
         return "\n".join(result)
 
+
 class BayesNet:
+
     def __init__(self, text):
         self.text = tuple(line.strip().lower() for line in text.splitlines())
         self.nodes = {}
@@ -165,13 +192,23 @@ class BayesNet:
         parents = node.parents
         parent_names = set(parent.name for parent in parents)
         if not parent_names < set(headers):
-            self._error("The CPT for \"{}\" is missing input columns for \"{}\"".format(node.name, "\", \"".join(sorted(parent_names - set(headers)))))
+            self._error(
+                "The CPT for \"{}\" is missing input columns for \"{}\"".format(
+                    node.name, "\", \"".join(sorted(parent_names - set(headers)))
+                )
+            )
         header_parents = headers[:len(parents)]
         header_probs = headers[len(parents):]
         if set(header_parents) != parent_names:
-            self._error("The CPT for \"{}\" has extra input columns for \"{}\"".format(node.name, "\", \"".join(sorted(set(header_parents) - parent_names))))
+            self._error(
+                "The CPT for \"{}\" has extra input columns for \"{}\"".format(
+                    node.name, "\", \"".join(sorted(set(header_parents) - parent_names))
+                )
+            )
         if len(header_probs) < 2:
-            self._error("There are not enough values for \"{}\" in its CPT header (at least two needed).".format(node.name))
+            self._error(
+                "There are not enough values for \"{}\" in its CPT header (at least two needed).".format(node.name)
+            )
         node.values = headers[len(parents):]
         num_rows = my_product(len(self.nodes[parent_name].values) for parent_name in header_parents)
         for line_diff in range(num_rows):
@@ -274,8 +311,9 @@ class BayesNet:
                 pi = 1
                 for node in relevant_nodes:
                     key = tuple(
-                            (parent.name, assignment[parent])
-                            for parent in sorted(node.parents, key=(lambda n: n.name)))
+                        (parent.name, assignment[parent])
+                        for parent in sorted(node.parents, key=(lambda n: n.name))
+                    )
                     pi *= dict(dict((tuple(sorted(key)), value) for key, value in node.cpt)[key])[assignment[node]]
                 sigma += pi
             result[value] = sigma
@@ -295,11 +333,25 @@ class BayesNet:
             result.append('        "{}"'.format(node.name))
             if node.posterior:
                 if node.observation is not None:
-                    result.append('        "{}_cpt" [shape=box, fontname=Courier, penwidth=3, label="{}"]'.format(node.name, node.observation))
+                    result.append(
+                        '        "{}_cpt" [shape=box, fontname=Courier, penwidth=3, label="{}"]'.format(
+                            node.name, node.observation
+                        )
+                    )
                 else:
-                    result.append('        "{}_cpt" [shape=box, fontname=Courier, label=\"{}\"]'.format(node.name, node.posterior_string().replace("\n", "\\n")))
+                    result.append(
+                        '        "{}_cpt" [shape=box, fontname=Courier, label=\"{}\"]'.format(
+                            node.name,
+                            node.posterior_string().replace("\n", "\\n")
+                        )
+                    )
             else:
-                result.append('        "{}_cpt" [shape=box, fontname=Courier, label=\"{}\"]'.format(node.name, node.cpt_string().replace("\n", "\\n")))
+                result.append(
+                    '        "{}_cpt" [shape=box, fontname=Courier, label=\"{}\"]'.format(
+                        node.name,
+                        node.cpt_string().replace("\n", "\\n")
+                    )
+                )
             result.append('        "{}" -> "{}_cpt" [style=invis]'.format(node.name, node.name))
             result.append('    }')
         for node in sorted(self.nodes.values(), key=(lambda node: (node.depth, node.name))):
