@@ -1,7 +1,7 @@
 import json
 from os.path import basename, dirname, join as join_path
 
-from flask import Blueprint, send_from_directory, render_template, request, jsonify
+from flask import Blueprint, render_template, request, jsonify
 
 from .info_ret import get_catalog, dispatch_transform
 

@@ -1,6 +1,6 @@
 from os.path import basename, dirname, join as join_path
 
-from flask import Blueprint, send_from_directory, render_template
+from flask import Blueprint, render_template
 
 APP_NAME = basename(dirname(__file__))
 

@@ -1,8 +1,7 @@
-import re
 from collections import namedtuple
 from os.path import basename, dirname, join as join_path
 
-from flask import Blueprint, send_from_directory, request, render_template
+from flask import Blueprint, request, render_template
 
 from .liveness import control_flow_graph, DataflowWalker, upwards_exposure, local_definitions, available_definitions, reachability, liveness as calculate_liveness
 

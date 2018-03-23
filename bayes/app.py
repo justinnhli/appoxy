@@ -1,6 +1,6 @@
 from os.path import basename, dirname, join as join_path
 
-from flask import Blueprint, send_from_directory, render_template, request
+from flask import Blueprint, render_template, request
 
 from .bayesnet import BayesNet
 

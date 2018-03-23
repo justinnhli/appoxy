@@ -152,7 +152,7 @@ class BayesNet:
 
     def _parse_CPT(self, node_name):
         cpt_lines = [num for num, line in enumerate(self.text) if line.strip(":") == "cpt for {}".format(node_name)]
-        if len(cpt_lines) == 0:
+        if cpt_lines:
             self._error("No CPT for \"{}\" given".format(node_name))
         elif len(cpt_lines) > 1:
             self._error("Multiple CPTs for \"{}\" given".format(node_name))
@@ -238,7 +238,7 @@ class BayesNet:
 
     @property
     def has_errors(self):
-        return (self.error is not None)
+        return self.error is not None
 
     def infer(self, evidence):
         # reset all nodes

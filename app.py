@@ -33,9 +33,9 @@ def resources(filename):
 
 
 @app.route('/<app>/static/<filename>')
-def get_app_resource(app, filename):
+def get_app_resource(applet, filename):
     if filename.split('.')[-1] in ('css', 'js'):
-        return send_from_directory(join_path(app, 'static'), filename)
+        return send_from_directory(join_path(applet, 'static'), filename)
     else:
         return abort(404)
 
