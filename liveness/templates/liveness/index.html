@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <title>Liveness Analysis Demo</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('.static', filename='style.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/static/viz.js"></script>
+    <script src="{{ url_for('.static', filename='main.js') }}"></script>
+</head>
+<body>
+    <h1 id="site-title">Liveness Analysis Demo (<a href="https://dl.acm.org/citation.cfm?id=360025">Allen and Cooke, 1976</a>)</h1>
+    <table id="layout" style="border-width:0px;">
+        <tr>
+            <td id="src_cell">
+                <p>
+                    <strong>Supported syntax</strong>:
+                    non-negative integer values;
+                    lower-case variables and functions;
+                    numeric and boolean operators;
+                    braced <code>if</code>, <code>if</code>-<code>else</code>, and <code>while</code>.
+                </p>
+                <p>
+                    <strong>Unsupported syntax</strong>:
+                    string and decimal values;
+                    negation (<code>-</code>);
+                    not (<code>!</code>);
+                    bit operators;
+                    <code>else if</code>, <code>for</code>, <code>do</code>-<code>while</code>;
+                    <code>break</code>, <code>continue</code>.
+                </p>
+                <textarea id="src"></textarea><br>
+                <button id="analyze">Analyze</button><br>
+            </td>
+
+            <td id="cfg_cell">
+                <div id="cfg"></div>
+            </td>
+        </tr>
+    </table>
+    <hr>
+    <h2>Static Information</h2>
+    <div id="usage"></div>
+    <hr>
+    <h2>Reach and Availability Calculations</h2>
+    <div id="reachability"></div>
+    <hr>
+    <h2>Liveness</h2>
+    <div id="liveness"></div>
+</body>
+</html>

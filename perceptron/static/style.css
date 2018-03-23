@@ -1,0 +1,15 @@
+body {text-align:center;}
+#intro {width:60%; margin:auto;}
+table {border-collapse:collapse;}
+th, td {border:1px solid #000000; padding:5px; text-align:center;}
+.black, .white {cursor:pointer; min-width:100px;}
+.black {background-color:black; color:white; content:"0";}
+.white {background-color:white; color:black; content:"1";}
+#init {border-collapse:collapse; margin:2em auto;}
+#train {font-size:large; margin:5px;}
+#log {text-align:left;}
+table.trial {vertical-align:top;}
+table.trial td {font-size:20px;}
+table.trial div {width:50px; min-width:50px; max-width:50px; height:50px; margin-bottom:1em;}
+div.input {border:1px solid #000000;}
+hr {margin:50px auto;}

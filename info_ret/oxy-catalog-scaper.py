@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import re
-from textwrap import indent
 from urllib.parse import urljoin
 
 import requests
@@ -39,7 +38,6 @@ def main(year):
                 continue
             split = [s.strip() for s in text.split(' ', maxsplit=2)]
             assert len(split) == 3, 'Cannot split "{}" into three'.format(text)
-            course_dept, course_num, course_title = split
             course_soup = getSoupFromURL(urljoin(BASE_URL, course_link_soup['href']))
             course_desc = extract_text(course_soup.select('#main')[0])
             print('\n'.join(s.strip() for s in course_desc.splitlines() if s.strip()))

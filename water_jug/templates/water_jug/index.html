@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Water Jug Demo</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('.static', filename='style.css') }}">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="{{ url_for('.static', filename='main.js') }}"></script>
+    </head>
+    <body>
+        <h1>Water Jug Simulator</h1>
+        <div>
+            <h2>Agent Rules</h2>
+            <table id="ruletable">
+            </table>
+            <p><button onclick="addRule()">Add another rule</button></p>
+        </div>
+        <div>
+            <h2>Problem Settings</h2>
+            <p>
+                Small jug capacity: <input type="textbox" id="smallsize" value="3">
+                &nbsp;&nbsp;&nbsp;
+                Large jug capacity: <input type="textbox" id="largesize" value="5">
+                &nbsp;&nbsp;&nbsp;
+                Desired volume: <input type="textbox" id="target" value="4">
+            </p>
+            <p><button onclick="runAgent()">Run the agent!</button></p>
+        </div>
+        <div>
+            <h2>Output</h2>
+            <pre id="stdout" style="text-align:left;">
+            </pre>
+        </div>
+        <div>
+            <textarea id="stderr" readonly></textarea>
+        </div>
+        <script type="text/javascript">init();</script>
+    </body>
+</html>
