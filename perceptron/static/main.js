@@ -79,7 +79,8 @@ function run() {
         weights.push(Number($("#weight" + (i + 1)).val()));
     }
     while (!done && trial < 100) {
-        log($("<h2>Trial " + (trial + 1) + "</h2>"));
+        html = "<div>";
+        html += "<h2>Trial " + (trial + 1) + "</h2>";
         // randomly select a pattern to present
         pattern = 0;
         if ($("#random").prop("checked")) {
@@ -110,7 +111,7 @@ function run() {
         } else {
             output = 0;
         }
-        html = "<table class=\"trial\">";
+        html += "<table class=\"trial\">";
         html += "<tr>";
         html += "<th>Input Pattern " + pattern + "</th>";
         html += "<th>Weights</th>";
@@ -142,21 +143,18 @@ function run() {
         html += "</td>";
         html += "</tr>";
         html += "</table>";
-        log($(html));
-        html = "<p>";
+        html += "<p>";
         html += "The input is Pattern " + pattern + ", and the ANN thinks it is Pattern " + output + ". ";
         if (pattern === output) {
             // if correct, set correct* to true
             correct[pattern] = true;
             html += "The ANN is <strong>CORRECT</strong>, so the weights do not need to be adjusted.";
             html += "</p>";
-            log($(html));
         } else {
             // if incorrect, for each neuron, new weight = old weight + (active * difference * learning rate)
             html += "The ANN is <strong>INCORRECT</strong>; the weights will be adjusted:";
             html += "</p>";
-            log($(html));
-            html = "<table>";
+            html += "<table>";
             html += "<tr><th>Neuron</th><th>Active</th><th>Old Weight</th><th>Change<br>(active * difference * learning rate)</th><th>New Weight</th></tr>";
             for (i = 0; i < NUM_NEURONS; i += 1) {
                 html += "<tr>";
@@ -174,12 +172,13 @@ function run() {
                 html += "<td>" + weights[i].toFixed(1) + "</td>";
                 html += "</tr>";
             }
-            html += "</table>";
-            log($(html));
+            html += "</table></br>";
             // if incorrect, set both correct* to false
             correct[0] = false;
             correct[1] = false;
         }
+        html += '</div>';
+        log($(html));
         log($("<hr>"));
         done = correct[0] && correct[1];
         trial += 1;

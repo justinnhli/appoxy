@@ -1,3 +1,3 @@
-"""An ELIZA style chatbot, with editor."""
+"""ELIZA style chatbot and editor."""
 
 from .app import app as chatbot
