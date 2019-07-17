@@ -5,10 +5,10 @@
     <title>AppOxy</title>
 </head>
 <body>
-    <table>
+    <table style="margin:auto;">
         {% for name, applet in applets %}
         <tr>
-            <td><a href="{{ applet.url }}">{{ name }}</a></td>
+            <td style="padding-right:1em;"><a href="{{ applet.url }}">{{ name }}</a></td>
             <td>{{ applet.doc }}</td>
         </tr>
         {% endfor %}
