@@ -1,4 +1,8 @@
+# core
 Flask==1.0.2
 Jinja2==2.10.1
 Werkzeug==0.15.2
 gunicorn==19.9.0
+
+# utility
+git+https://github.com/justinnhli/pegparse@5c71207a5a32ed6e3502eafb11ae5d91bc9c1385
