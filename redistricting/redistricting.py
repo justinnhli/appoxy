@@ -238,7 +238,7 @@ class ObjectiveWalker(ASTWalker):
     def _parse_DistrictObjective(self, ast, results):
         return (lambda partition, graph, districts: sum(results[0](district, graph, districts) for district in partition))
 
-    def _parse_CountyObjective(self, ast, results):
+    def _parse_PrecinctObjective(self, ast, results):
         return (lambda partition, graph, districts:
             sum(
                 results[0](graph.nodes[node_id]['cell'], graph, districts)
@@ -268,7 +268,7 @@ class ObjectiveWalker(ASTWalker):
             sum(results[0](graph.nodes[node_id]['cell'], graph, districts) for node_id in district)
         )
 
-    def _parse_CountyComparisonCondition(self, ast, results):
+    def _parse_PrecinctComparisonCondition(self, ast, results):
         if results[0] == 'more':
             return (lambda cell, graph, districts: results[1](cell, graph, districts) > results[2](cell, graph, districts))
         elif results[0] == 'fewer':
@@ -276,7 +276,7 @@ class ObjectiveWalker(ASTWalker):
         else:
             return (lambda cell, graph, districts: results[1](cell, graph, districts) == results[2](cell, graph, districts))
 
-    def _parse_CountyAttributeCondition(self, ast, results):
+    def _parse_PrecinctAttributeCondition(self, ast, results):
         return (lambda cell, graph, districts: results[0](cell, graph, districts) > 0)
 
     def _parse_NeighborAttribute(self, ast, results):

@@ -780,7 +780,7 @@ $(function () {
         var cell = DEMOGRAPHICS[row][col];
         var info = $('#demographic-info');
         info.empty();
-        info.append('<h3>County ' + (row + 1) + '-' + (col + 1) + '</h3>');
+        info.append('<h3>Precinct ' + (row + 1) + '-' + (col + 1) + '</h3>');
         if (!cell['active']) {
             info.append('<p>Unpopulated</p>');
             return
@@ -997,7 +997,7 @@ $(function () {
         if (select.val().startsWith('districts')) {
             new_clause = create_district_condition();
         } else {
-            new_clause = create_county_condition();
+            new_clause = create_precinct_condition();
         }
         select.parent().append(new_clause);
         $(new_clause.find('select')[0]).trigger('change');
@@ -1039,7 +1039,7 @@ $(function () {
             if (entity_val.startsWith('voters')) {
                 grandparent_span.append(create_demographic_attribute());
             } else {
-                grandparent_span.append(create_county_condition());
+                grandparent_span.append(create_precinct_condition());
             }
         } else {
             if (entity_val.startsWith('voters')) {
@@ -1049,15 +1049,15 @@ $(function () {
                 var indent = '&nbsp;'.repeat(10);
                 parent_span.find('span').html('<br>' + indent);
                 grandparent_span.append($('<span>')
-                    .append(create_county_condition())
+                    .append(create_precinct_condition())
                     .append('<br>than/as <br>' + indent + 'counties that ')
-                    .append(create_county_condition())
+                    .append(create_precinct_condition())
                 );
             }
         }
     }
 
-    function create_county_condition() {
+    function create_precinct_condition() {
         var compare_select = create_compare_word();
         var entity_select = $('<select>')
             .append('<option>voters who</option>')
@@ -1071,17 +1071,17 @@ $(function () {
                 .append(' ')
             );
         compare_select
-            .change(county_condition_on_change)
+            .change(precinct_condition_on_change)
             .change(update_objective_function)
             .trigger('change');
         entity_select
-            .change(county_condition_on_change)
+            .change(precinct_condition_on_change)
             .change(update_objective_function)
             .trigger('change');
         return span;
     }
 
-    function county_condition_on_change() {
+    function precinct_condition_on_change() {
         var parent_span = $(this).parent();
         var grandparent_span = parent_span.parent();
         parent_span.nextAll().remove();

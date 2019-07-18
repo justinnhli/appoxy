@@ -4,10 +4,10 @@ MinMax = "minimizing"
        | "maximizing";
 
 ObjectiveType = DistrictObjective
-              | CountyObjective;
+              | PrecinctObjective;
 
 DistrictObjective = "districts that " DistrictCondition;
-CountyObjective = "counties that " CountyCondition;
+PrecinctObjective = "counties that " PrecinctCondition;
 
 
 
@@ -15,31 +15,31 @@ CountyObjective = "counties that " CountyCondition;
 DistrictCondition = DistrictComparisonCondition
                   | DistrictAttributeCondition;
 DistrictComparisonCondition = DistrictDemographicComparisonCondition
-                            | DistrictCountyComparisonCondition;
+                            | DistrictPrecinctComparisonCondition;
 
 DistrictDemographicComparisonCondition = DemographicComparisonCondition;
-DistrictCountyComparisonCondition = "have " CompareWord " " DistrictCountyAttribute " than/as " DistrictCountyAttribute;
+DistrictPrecinctComparisonCondition = "have " CompareWord " " DistrictPrecinctAttribute " than/as " DistrictPrecinctAttribute;
 DistrictAttributeCondition = "have " DistrictAttribute;
 
 DistrictAttribute = DemographicAttribute
-                  | DistrictCountyAttribute;
+                  | DistrictPrecinctAttribute;
 
-DistrictCountyAttribute = "counties that " CountyCondition;
+DistrictPrecinctAttribute = "counties that " PrecinctCondition;
 
 
 
-CountyCondition = CountyComparisonCondition
-                | CountyAttributeCondition;
-CountyComparisonCondition = CountyDemographicComparisonCondition
-                          | CountyNeighborComparisonCondition;
+PrecinctCondition = PrecinctComparisonCondition
+                | PrecinctAttributeCondition;
+PrecinctComparisonCondition = PrecinctDemographicComparisonCondition
+                          | PrecinctNeighborComparisonCondition;
 
-CountyDemographicComparisonCondition = DemographicComparisonCondition;
-CountyNeighborComparisonCondition = "have " CompareWord " " CountyNeighborAttribute " than/as " CountyNeighborAttribute;
-CountyAttributeCondition = "have " CountyAttribute;
+PrecinctDemographicComparisonCondition = DemographicComparisonCondition;
+PrecinctNeighborComparisonCondition = "have " CompareWord " " PrecinctNeighborAttribute " than/as " PrecinctNeighborAttribute;
+PrecinctAttributeCondition = "have " PrecinctAttribute;
 
-CountyAttribute = DemographicAttribute
-                | CountyNeighborAttribute;
-CountyNeighborAttribute = "neighboring counties that are " NeighborAttribute;
+PrecinctAttribute = DemographicAttribute
+                | PrecinctNeighborAttribute;
+PrecinctNeighborAttribute = "neighboring counties that are " NeighborAttribute;
 
 
 
