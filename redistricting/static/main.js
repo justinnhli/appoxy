@@ -406,7 +406,7 @@ $(function () {
         row_html += '<th>Partition</th>';
         row_html += '<th># Districts (R/B)</th>';
         row_html += '<th>Min/Mean/Max Population</th>';
-        row_html += '<th>Efficiency Gap</th>';
+        // row_html += '<th>Efficiency Gap</th>';
         row_html += '</tr>';
         table.append(row_html);
 
@@ -492,12 +492,12 @@ $(function () {
             }
             tr.append('<td>' + min_pop + ' / ' + Math.round(total_pop / districts.length) + ' / ' + max_pop + '</td>')
             // efficiency gap
-            tr.append('<td></td>')
+            //tr.append('<td></td>')
             table.append(tr);
 
             var districts_row = $('<tr id="' + solution_prefix + '-districts-row">')
                 .append($('<td colspan="1">'))
-                .append($('<td colspan="4">').append(create_districts_table(SOLUTION_DEMOGRAPHICS, districts, partition_borders, SOLUTION_USE_DEMOGRAPHICS, solution_id)))
+                .append($('<td colspan="3">').append(create_districts_table(SOLUTION_DEMOGRAPHICS, districts, partition_borders, SOLUTION_USE_DEMOGRAPHICS, solution_id)))
                 .hide();
             table.append(districts_row);
         }
