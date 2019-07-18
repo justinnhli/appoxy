@@ -1,0 +1,64 @@
+Objective = "Create " Number " districts while " MinMax " the number of " ObjectiveType ".";
+
+MinMax = "minimizing"
+       | "maximizing";
+
+ObjectiveType = DistrictObjective
+              | CountyObjective;
+
+DistrictObjective = "districts that " DistrictCondition;
+CountyObjective = "counties that " CountyCondition;
+
+
+
+
+DistrictCondition = DistrictComparisonCondition
+                  | DistrictAttributeCondition;
+DistrictComparisonCondition = DistrictDemographicComparisonCondition
+                            | DistrictCountyComparisonCondition;
+
+DistrictDemographicComparisonCondition = DemographicComparisonCondition;
+DistrictCountyComparisonCondition = "have " CompareWord " " DistrictCountyAttribute " than/as " DistrictCountyAttribute;
+DistrictAttributeCondition = "have " DistrictAttribute;
+
+DistrictAttribute = DemographicAttribute
+                  | DistrictCountyAttribute;
+
+DistrictCountyAttribute = "counties that " CountyCondition;
+
+
+
+CountyCondition = CountyComparisonCondition
+                | CountyAttributeCondition;
+CountyComparisonCondition = CountyDemographicComparisonCondition
+                          | CountyNeighborComparisonCondition;
+
+CountyDemographicComparisonCondition = DemographicComparisonCondition;
+CountyNeighborComparisonCondition = "have " CompareWord " " CountyNeighborAttribute " than/as " CountyNeighborAttribute;
+CountyAttributeCondition = "have " CountyAttribute;
+
+CountyAttribute = DemographicAttribute
+                | CountyNeighborAttribute;
+CountyNeighborAttribute = "neighboring counties that are " NeighborAttribute;
+
+
+
+NeighborAttribute = "in the same district"
+                  | "in a different district";
+
+
+
+DemographicComparisonCondition = "have " CompareWord " " DemographicAttribute " than/as " DemographicAttribute;
+DemographicAttribute = "voters who " Demographic;
+Demographic = "are Asian"
+            | "are Black"
+            | "are Caucasian"
+            | "are Hispanic"
+            | "vote Red"
+            | "vote Blue";
+
+CompareWord = "more"
+            | "fewer"
+            | "the same number of";
+
+Number = ( digit )+;

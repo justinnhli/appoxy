@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>The Redistricting Playground</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('.static', filename='style.css') }}">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="{{ url_for('.static', filename='main.js') }}"></script>
+    </head>
+
+    <body>
+
+        <h1><a href="/redistricting">The Redistricting Playground</a></h1>
+        <div>
+            <table id="control-panel">
+                <tr>
+                    <td id="main-map-td">
+                        <p id="board-size-control">
+                            Rows: <input id="num-rows" type="number" min="2" max="5" value="3">
+                            Columns: <input id="num-cols" type="number" min="2" max="5" value="5">
+                        </p>
+                        <div id="main-map-container"></div>
+                        <p>
+                            <button id="clear-population">clear</button>
+                            <button id="randomize-population">randomize</button>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <button id="clear-borders">clear borders</button>
+
+                        </p>
+                    </td>
+                    <td id="demographic-info"></td>
+                    <td id="solver-container">
+                        <div id="objective-function"></div>
+                        <p>
+                            <label><input type="checkbox" id="mode-control">use demographics</label>
+                            <button id="solve">Solve</button>
+                        </p>
+                    </td>
+                </tr>
+                <tr><td colspan="3" id="main-districts"></td></tr>
+            </table>
+        </div>
+        <h2 id="solutions">Solutions</h2>
+        <table id="solutions-table"></table>
+
+    </body>
+</html>

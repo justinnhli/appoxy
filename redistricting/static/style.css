@@ -1,0 +1,49 @@
+#main-map-td p {text-align:center;}
+input[type=number] {width:3em;}
+
+
+#control-panel {border-collapse:collapse; vertical-align:top; width:100%;}
+#control-panel #demographic-info {display:none;}
+
+#control-panel #demographic-info #demographic-slider-table th {text-align:left;}
+#control-panel #demographic-info #demographic-slider-table td {padding:0;}
+#control-panel #demographic-info #demographic-slider-table td.race-label-cell {padding-left:0.5em;}
+#control-panel #demographic-info #demographic-slider-table td.demographic-readout-cell {width:3em;}
+
+#control-panel > tbody > tr > td {border:1px solid #000000; vertical-align:top;}
+
+table#main-map {font-size:48pt;}
+table#main-map td span.dot {cursor:pointer;}
+table#main-map td.cell:hover {background-color:#E0E080; cursor:context-menu;}
+table#main-map td.selected-cell {background-color:#E0E080;}
+
+table.electoral-map {border-collapse:collapse; text-align:center; vertical-align:middle; margin:auto;}
+table.electoral-map td.cell {min-width:1.25em; max-width:1.25em;}
+table.electoral-map td.cell div {min-height:1.25em; max-height:1.25em;}
+table.electoral-map tr {min-height:0.5em;}
+table.electoral-map td span.dot {height:1em; width:1em; margin:0.125em; border-radius:50%; display:inline-block;}
+table.electoral-map td.red-cell span.dot {background-color:#A40000;}
+table.electoral-map td.blue-cell span.dot {background-color:#204A87;}
+table.electoral-map td.purple-cell span.dot {background-color:#75507B;}
+table.electoral-map td.empty-cell span.dot {background-color:#D3D7CF;}
+table.electoral-map td.red-district {background-color:#E08080;}
+table.electoral-map td.blue-district {background-color:#73ADDA;}
+table.electoral-map td.purple-district {background-color:#C090E6;}
+table.electoral-map td.empty-district {background-color:#FFFFFF;}
+table.electoral-map td.vertical-border {min-width:0.1em;}
+table.electoral-map td.horizontal-border div {min-height:0.1em;}
+table.electoral-map td.border.inactive {background-color:#BABDB6;}
+table.electoral-map td.border.active {background-color:#000000;}
+table.electoral-map td.border-toggle {cursor:pointer;}
+table.electoral-map td.border-toggle div {width:100%; font-size:0.075em;}
+
+table.clickable-solution {cursor:pointer;}
+table.solution-map {font-size:10pt;}
+#solutions {display:none;}
+#solutions-table {border-collapse:collapse; text-align:center; width:100%;}
+#solutions-table > tr > th {font-size:larger;}
+#solutions-table > tr > td {padding:1em;}
+#solutions-table tr.solution-row:hover {background-color:#EEEEEC;}
+#solutions-table .solution-number {font-weight:bold;}
+#solutions-table span.districts-toggle:hover {cursor:pointer; text-decoration:underline;}
+.districts-table {width:100%; text-align:center;}
