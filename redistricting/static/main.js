@@ -660,8 +660,8 @@ $(function () {
         }
         if (new_size < 2) {
             control.val(2);
-        } else if (new_size > 10) {
-            control.val(10);
+        } else if (new_size > 5) {
+            control.val(5);
         }
         create_board();
         $('#main-map-container').empty();
