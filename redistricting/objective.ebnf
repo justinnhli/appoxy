@@ -7,7 +7,7 @@ ObjectiveType = DistrictObjective
               | PrecinctObjective;
 
 DistrictObjective = "districts that " DistrictCondition;
-PrecinctObjective = "counties that " PrecinctCondition;
+PrecinctObjective = "precincts that " PrecinctCondition;
 
 
 
@@ -24,7 +24,7 @@ DistrictAttributeCondition = "have " DistrictAttribute;
 DistrictAttribute = DemographicAttribute
                   | DistrictPrecinctAttribute;
 
-DistrictPrecinctAttribute = "counties that " PrecinctCondition;
+DistrictPrecinctAttribute = "precincts that " PrecinctCondition;
 
 
 
@@ -39,7 +39,7 @@ PrecinctAttributeCondition = "have " PrecinctAttribute;
 
 PrecinctAttribute = DemographicAttribute
                 | PrecinctNeighborAttribute;
-PrecinctNeighborAttribute = "neighboring counties that are " NeighborAttribute;
+PrecinctNeighborAttribute = "neighboring precincts that are " NeighborAttribute;
 
 
 

@@ -980,7 +980,7 @@ $(function () {
                 .append(' the number of ')
                 .append($('<select id="root-entity">')
                     .append('<option>districts</option>')
-                    .append('<option>counties</option>')
+                    .append('<option>precincts</option>')
                 )
                 .append(' that ')
             )
@@ -1011,7 +1011,7 @@ $(function () {
         var compare_select = create_compare_word();
         var entity_select = $('<select>')
             .append('<option>voters who</option>')
-            .append('<option>counties that</option>');
+            .append('<option>precincts that</option>');
         var span = $('<span>')
             .append(' have ')
             .append($('<span>')
@@ -1054,7 +1054,7 @@ $(function () {
                 parent_span.find('span').html('<br>' + indent);
                 grandparent_span.append($('<span>')
                     .append(create_precinct_condition())
-                    .append('<br>than/as <br>' + indent + 'counties that ')
+                    .append('<br>than/as <br>' + indent + 'precincts that ')
                     .append(create_precinct_condition())
                 );
             }
@@ -1065,7 +1065,7 @@ $(function () {
         var compare_select = create_compare_word();
         var entity_select = $('<select>')
             .append('<option>voters who</option>')
-            .append('<option>neighboring counties that</option>');
+            .append('<option>neighboring precincts that</option>');
         var span = $('<span>')
             .append(' have ')
             .append($('<span>')
@@ -1109,7 +1109,7 @@ $(function () {
                 parent_span.find('span').html('<br>' + indent);
                 grandparent_span.append($('<span>')
                     .append(create_neighbor_attribute())
-                    .append('<br>' + half_indent + 'than/as <br>' + indent + 'neighboring counties that ')
+                    .append('<br>' + half_indent + 'than/as <br>' + indent + 'neighboring precincts that ')
                     .append(create_neighbor_attribute())
                 );
             }
