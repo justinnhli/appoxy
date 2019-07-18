@@ -384,15 +384,19 @@ $(function () {
         );
         solutions_title.show()
         $('#solutions-table').empty();
-        $.post('/redistricting/solve', JSON.stringify(data)).done(function(response) {
-            if (Object.keys(response).length === 0) {
-                $('#solutions').html('Invalid parameters');
-                return;
-            }
-            solutions_title.html('Optimized into ' + objective.substr(objective.indexOf(" ") + 1));
-            SOLUTIONS = JSON.parse(response);
-            create_solutions_table()
-        });
+        $.post('/redistricting/solve', JSON.stringify(data))
+            .done(function(response) {
+                if (Object.keys(response).length === 0) {
+                    $('#solutions').html('Invalid parameters');
+                    return;
+                }
+                solutions_title.html('Optimized into ' + objective.substr(objective.indexOf(" ") + 1));
+                SOLUTIONS = JSON.parse(response);
+                create_solutions_table()
+            })
+            .fail(function () {
+                $('#solutions').html('Optimization failed (took too long)');
+            });
     }
 
     function create_solutions_table() {
