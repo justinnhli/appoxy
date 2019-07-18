@@ -14,8 +14,8 @@ input[type=number] {width:3em;}
 
 table#main-map {font-size:48pt;}
 table#main-map td span.dot {cursor:pointer;}
-table#main-map td.cell:hover {background-color:#E0E080; cursor:context-menu;}
-table#main-map td.selected-cell {background-color:#E0E080;}
+table#main-map.use-demographics td.cell:hover {background-color:#E0E080; cursor:context-menu;}
+table#main-map.use-demographics td.selected-cell {background-color:#E0E080;}
 
 table.electoral-map {border-collapse:collapse; text-align:center; vertical-align:middle; margin:auto;}
 table.electoral-map td.cell {min-width:1.25em; max-width:1.25em;}

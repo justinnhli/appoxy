@@ -713,10 +713,12 @@ $(function () {
         if (use_demographics()) {
             $('#demographic-info').show();
             $('#' + MAIN_PREFIX + '-' + SELECTED_ROW + '-' + SELECTED_COL).addClass('selected-cell');
+            $('#main-map').addClass('use-demographics');
             display_demographics(SELECTED_ROW, SELECTED_COL);
         } else {
             $('#demographic-info').hide();
             $('#' + MAIN_PREFIX + '-' + SELECTED_ROW + '-' + SELECTED_COL).removeClass('selected-cell');
+            $('#main-map').removeClass('use-demographics');
         }
         display_main_districts();
         save_demographics();
