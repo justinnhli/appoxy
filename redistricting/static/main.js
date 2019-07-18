@@ -1219,7 +1219,7 @@ $(function () {
             'use_demographics': btoa(JSON.stringify(use_demographics())),
             'objective': btoa(JSON.stringify(OBJECTIVE))
         });
-        window.setTimeout(function () { SAVING = false ; }, 200);
+        window.setTimeout(function () { SAVING = false ; }, 5000);
     }
 
     function main() {
