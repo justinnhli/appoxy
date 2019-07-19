@@ -127,6 +127,13 @@ def graph_to_json(graph, exclusions=None):
     return json.dumps(rows)
 
 
+def create_district_map(partition):
+    districts = {}
+    for district_id, district in enumerate(partition):
+        for node in district:
+            districts[node] = district_id
+    return districts
+
 def all_first_districts_of_size(graph, size):
 
     visited = set()
@@ -209,11 +216,7 @@ def solve_optimally(graph, num_districts, metric_fn, cache=None):
     if not partitions:
         return
     for partition in partitions:
-        districts = {}
-        if partitions is not None:
-            for district_id, district in enumerate(partition):
-                for node in district:
-                    districts[node] = district_id
+        districts = create_district_map(partition)
         score = metric_fn(partition, graph, districts)
         if cache_key not in cache or score > cache[cache_key].score:
             cache[cache_key] = SubSolution(score, set([partition]))

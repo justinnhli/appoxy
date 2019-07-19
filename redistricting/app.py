@@ -7,7 +7,7 @@ from time import time
 
 from flask import Blueprint, render_template, request
 
-from .redistricting import json_to_graph, Cell, solve_optimally
+from .redistricting import json_to_graph, Cell, create_district_map, solve_optimally
 from .redistricting import ObjectiveWalker
 
 APP_NAME = basename(dirname(__file__))
@@ -52,10 +52,7 @@ def solve():
     result = []
     start = time()
     for partition in solve_optimally(graph, num_districts, metric):
-        districts = {}
-        for district_id, district in enumerate(partition):
-            for node in district:
-                districts[node] = district_id
+        districts = create_district_map(partition)
         borders = []
         for row in range(num_rows):
             for col in range(1, num_cols):
