@@ -107,6 +107,8 @@ def json_to_graph(graph_json):
 
 
 def graph_to_json(graph, exclusions=None):
+    if not graph:
+        return json.dumps([])
     if exclusions is None:
         exclusions = set()
     elif not isinstance(exclusions, set):
@@ -134,45 +136,49 @@ def create_district_map(partition):
             districts[node] = district_id
     return districts
 
-def all_first_districts_of_size(graph, size):
+
+def all_first_districts(graph, population, num_districts):
 
     visited = set()
 
-    def _all_first_districts_of_size(remaining, district, frontier):
-        if remaining <= 0:
-            yield tuple(sorted(district))
-        else:
-            for node in frontier:
-                new_district = district | set([node])
-                hashable_district = tuple(sorted(new_district))
-                if hashable_district in visited:
-                    continue
-                visited.add(hashable_district)
-                cell = graph.nodes[node]['cell']
-                if cell.active:
-                    population = cell.population
-                else:
-                    population = 0
-                if remaining < population:
-                    yield tuple(sorted(district))
-                    yield tuple(sorted(new_district))
-                else:
-                    yield from _all_first_districts_of_size(
-                        remaining - population,
-                        new_district,
-                        (frontier | set(graph.neighbors(node))) - set(district),
-                    )
+    def _all_first_districts_of_size(target_population, district, frontier, current_population):
+        for node in frontier:
+            new_district = district | set([node])
+            hashable_district = tuple(sorted(new_district))
+            if hashable_district in visited:
+                continue
+            visited.add(hashable_district)
+            cell = graph.nodes[node]['cell']
+            if cell.active:
+                population = cell.population
+            else:
+                population = 0
+            new_population = current_population + population
+            if new_population == target_population:
+                yield tuple(sorted(new_district)), new_population
+            elif new_population > target_population:
+                yield tuple(sorted(district)), current_population
+                yield tuple(sorted(new_district)), new_population
+            else:
+                yield from _all_first_districts_of_size(
+                    target_population,
+                    new_district,
+                    (frontier | set(graph.neighbors(node))) - set(district),
+                    new_population,
+                )
 
     if not any(graph.nodes[node]['cell'].active for node in graph):
-        return None
+        return
     root_node = min(node for node in graph if graph.nodes[node]['cell'].active)
-    return _all_first_districts_of_size(size, set(), set([root_node]))
+    mean_size = population / num_districts
+    for district_size in set([math.floor(mean_size), math.ceil(mean_size)]):
+        yield from _all_first_districts_of_size(district_size, set(), set([root_node]), 0)
 
 
 SubSolution = namedtuple('SubSolution', 'score, partitions')
 
 
-def solve_optimally(graph, num_districts, metric_fn, cache=None):
+def solve_optimally(graph, num_districts, metric_fn, population=None, cache=None):
     """Find the partition that maximizes the evaluation function.
 
     Parameters:
@@ -180,6 +186,7 @@ def solve_optimally(graph, num_districts, metric_fn, cache=None):
         num_districts (int): The number of districts.
         metric_fn (Callable[Tuple[Tuple[Tuple[int,int]]], float]):
             A function that evaluates a partition.
+        population (int): The total population of the map.
         cache (Mapping[ Tuple[str, Tuple[int]], SubSolution ]):
             A cache of the optimal subsolutions.
 
@@ -187,32 +194,35 @@ def solve_optimally(graph, num_districts, metric_fn, cache=None):
         Tuple[ Tuple[ Tuple[int, int] ] ]:
             Partitions, each a tuple of coordinates.
     """
+    if not graph:
+        yield ()
+        return
     if cache is None:
         cache = {}
     cache_key = (graph_to_json(graph), num_districts)
     if cache_key in cache:
         yield from cache[cache_key].partitions
         return
-    graph_size = sum(
-        graph.nodes[node]['cell'].population
-        for node in graph
-        if graph.nodes[node]['cell'].active
-    )
-    mean_size = graph_size / num_districts
+    if population is None:
+        population = sum(
+            graph.nodes[node]['cell'].population for node in graph
+            if graph.nodes[node]['cell'].active
+        )
     partitions = set()
-    if num_districts == 1:
-        partitions.add(tuple([tuple(sorted(graph.nodes))]))
-    else:
-        for district_size in set([math.floor(mean_size), math.ceil(mean_size)]):
-            first_districts = all_first_districts_of_size(graph, district_size)
-            if first_districts is None:
-                continue
-            for district in first_districts:
-                sub_graph = json_to_graph(json.loads(graph_to_json(graph, exclusions=district)))
-                if not (sub_graph and nx.is_connected(sub_graph)):
-                    continue
-                for sub_partition in solve_optimally(sub_graph, num_districts - 1, metric_fn, cache=cache):
-                    partitions.add(tuple(sorted((district,) + sub_partition)))
+    first_districts = all_first_districts(graph, population, num_districts)
+    for district, district_population in first_districts:
+        sub_graph = json_to_graph(json.loads(graph_to_json(graph, exclusions=district)))
+        if sub_graph and not nx.is_connected(sub_graph):
+            continue
+        sub_partitions = solve_optimally(
+            sub_graph,
+            num_districts - 1,
+            metric_fn,
+            population - district_population,
+            cache=cache,
+        )
+        for sub_partition in sub_partitions:
+            partitions.add(tuple(sorted((district, ) + sub_partition)))
     if not partitions:
         return
     for partition in partitions:
