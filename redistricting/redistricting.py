@@ -13,6 +13,7 @@ EBNF_FILE = Path(__file__).parent.joinpath('objective.ebnf')
 
 BASE = 'http://polytrope.com/district/sandbox.html'
 
+
 class Cell(namedtuple('_Cell', 'row, col, active, population, parties, races')):
 
     @property
@@ -222,12 +223,15 @@ def solve_optimally(graph, num_districts, metric_fn, cache=None):
 
 
 class ObjectiveWalker(ASTWalker):
+    # pylint: disable = bad-continuation, invalid-name, unused-argument, no-self-use
 
     def __init__(self):
         super().__init__(create_parser_from_file(str(EBNF_FILE)), 'Objective')
 
     def _parse_Objective(self, ast, results):
-        return (lambda partition, graph, districts: results[0] * results[1](partition, graph, districts))
+        return (lambda partition, graph, districts:
+            results[0] * results[1](partition, graph, districts)
+        )
 
     def _parse_MinMax(self, ast, results):
         if ast.match.startswith('min'):
@@ -236,13 +240,15 @@ class ObjectiveWalker(ASTWalker):
             return 1
 
     def _parse_DistrictObjective(self, ast, results):
-        return (lambda partition, graph, districts: sum(results[0](district, graph, districts) for district in partition))
+        return (lambda partition, graph, districts:
+            sum(results[0](district, graph, districts) for district in partition)
+        )
 
     def _parse_PrecinctObjective(self, ast, results):
         return (lambda partition, graph, districts:
             sum(
                 results[0](graph.nodes[node_id]['cell'], graph, districts)
-                for district in partition for node_id in district 
+                for district in partition for node_id in district
             )
         )
 
@@ -254,11 +260,17 @@ class ObjectiveWalker(ASTWalker):
             sum(results[2](graph.nodes[node_id]['cell'], graph, districts) for node_id in district)
         )
         if results[0] == 'more':
-            return (lambda district, graph, districts: func1(district, graph, districts) > func2(district, graph, districts))
+            return (lambda district, graph, districts:
+                func1(district, graph, districts) > func2(district, graph, districts)
+            )
         elif results[0] == 'fewer':
-            return (lambda district, graph, districts: func1(district, graph, districts) < func2(district, graph, districts))
+            return (lambda district, graph, districts:
+                func1(district, graph, districts) < func2(district, graph, districts)
+            )
         else:
-            return (lambda district, graph, districts: func1(district, graph, districts) == func2(district, graph, districts))
+            return (lambda district, graph, districts:
+                func1(district, graph, districts) == func2(district, graph, districts)
+            )
 
     def _parse_DistrictAttributeCondition(self, ast, results):
         return (lambda district, graph, districts: results[0](district, graph, districts) > 0)
@@ -270,11 +282,17 @@ class ObjectiveWalker(ASTWalker):
 
     def _parse_PrecinctComparisonCondition(self, ast, results):
         if results[0] == 'more':
-            return (lambda cell, graph, districts: results[1](cell, graph, districts) > results[2](cell, graph, districts))
+            return (lambda cell, graph, districts:
+                results[1](cell, graph, districts) > results[2](cell, graph, districts)
+            )
         elif results[0] == 'fewer':
-            return (lambda cell, graph, districts: results[1](cell, graph, districts) < results[2](cell, graph, districts))
+            return (lambda cell, graph, districts:
+                results[1](cell, graph, districts) < results[2](cell, graph, districts)
+            )
         else:
-            return (lambda cell, graph, districts: results[1](cell, graph, districts) == results[2](cell, graph, districts))
+            return (lambda cell, graph, districts:
+                results[1](cell, graph, districts) == results[2](cell, graph, districts)
+            )
 
     def _parse_PrecinctAttributeCondition(self, ast, results):
         return (lambda cell, graph, districts: results[0](cell, graph, districts) > 0)
@@ -313,59 +331,3 @@ class ObjectiveWalker(ASTWalker):
             return (lambda cell, graph, districts: cell.blue_votes)
         else:
             raise ValueError(f'Unknown demographic: {ast.match}')
-
-
-def metric_gerrymander_r(partition, graph):
-    total = 0
-    for district in partition:
-        red_votes = 0
-        blue_votes = 0
-        for node in district:
-            cell = graph.nodes[node]['cell']
-            red_votes += cell.red_votes
-            blue_votes += cell.blue_votes
-        if red_votes > blue_votes:
-            total += 1
-    return total
-
-
-def metric_gerrymander_b(partition, graph):
-    total = 0
-    for district in partition:
-        red_votes = 0
-        blue_votes = 0
-        for node in district:
-            cell = graph.nodes[node]['cell']
-            red_votes += cell.red_votes
-            blue_votes += cell.blue_votes
-        if blue_votes > red_votes:
-            total += 1
-    return total
-
-def metric_competitive(partition, graph):
-    total = 0
-    for district in partition:
-        red_votes = 0
-        blue_votes = 0
-        for node in district:
-            cell = graph.nodes[node]['cell']
-            red_votes += cell.red_votes
-            blue_votes += cell.blue_votes
-        if blue_votes == red_votes:
-            total += 1
-    return total
-
-
-def metric_compact(partition, graph):
-    # pylint: disable = unused-argument
-    districts = {}
-    for district_id, district in enumerate(partition):
-        for node in district:
-            districts[node] = district_id
-    total = 0
-    for row_id, col_id in graph:
-        orig_district = districts[(row_id, col_id)]
-        for neighbor_id in graph.neighbors((row_id, col_id)):
-            if neighbor_id in districts and districts[neighbor_id] != orig_district:
-                total -= 1
-    return total
