@@ -1,14 +1,10 @@
-import re
 import json
-import random
-from math import ceil
 from os.path import basename, dirname, join as join_path
 from time import time
 
 from flask import Blueprint, render_template, request
 
-from .redistricting import json_to_graph, Cell, create_district_map, solve_optimally
-from .redistricting import ObjectiveWalker
+from .redistricting import json_to_graph, Cell, ObjectiveWalker, solve_optimally, create_district_map
 
 APP_NAME = basename(dirname(__file__))
 
