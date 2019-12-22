@@ -5,7 +5,7 @@ from importlib import import_module
 from os import listdir
 from os.path import dirname, isdir, realpath, join as join_path
 
-from flask import abort, Flask, render_template, send_from_directory, url_for
+from flask import abort, Flask, render_template, send_from_directory, url_for, redirect
 
 IGNORE_DIRS = ['blueprint_template', 'static', 'templates']
 
@@ -27,7 +27,10 @@ for module_name in listdir(dirname(realpath(__file__))):
 @app.route('/static/<filename>')
 def resources(filename):
     if filename.split('.')[-1] in ('css', 'js'):
-        return send_from_directory('static', filename)
+        if filename == 'jquery.js':
+            return redirect('https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js', code=302)
+        else:
+            return send_from_directory('static', filename)
     else:
         return abort(404)
 
