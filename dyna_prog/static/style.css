@@ -1,0 +1,31 @@
+#main-map p {text-align:center;}
+
+table#main-map {font-size:48pt;}
+table#main-map td span.dot {cursor:pointer;}
+
+table.electoral-map {border-collapse:collapse; text-align:center; vertical-align:middle; margin:auto;}
+table.electoral-map td.cell {min-width:1.25em; max-width:1.25em;}
+table.electoral-map td.cell div {min-height:1.25em; max-height:1.25em;}
+table.electoral-map tr {min-height:0.5em;}
+table.electoral-map td span.dot {height:1em; width:1em; margin:0.125em; border-radius:50%; display:inline-block;}
+table.electoral-map td.red-cell span.dot {background-color:#A40000;}
+table.electoral-map td.blue-cell span.dot {background-color:#204A87;}
+table.electoral-map td.purple-cell span.dot {background-color:#75507B;}
+table.electoral-map td.empty-cell span.dot {background-color:#D3D7CF;}
+table.electoral-map td.red-district {background-color:#E08080;}
+table.electoral-map td.blue-district {background-color:#73ADDA;}
+table.electoral-map td.purple-district {background-color:#C090E6;}
+table.electoral-map td.empty-district {background-color:#FFFFFF;}
+table.electoral-map td.vertical-border {min-width:0.1em;}
+table.electoral-map td.horizontal-border div {min-height:0.1em;}
+table.electoral-map td.border.inactive {background-color:#BABDB6;}
+table.electoral-map td.border.active {background-color:#000000;}
+table.electoral-map td.border-toggle {cursor:default;}
+table.electoral-map td.border-toggle div {width:100%; font-size:0.075em;}
+
+h3 {display:inline; padding:1em;}
+table.trace {border-collapse:collapse; margin-left:3em;}
+table.trace > tr > td {border:1px solid #000000; padding:5px;}
+td.district-td {vertical-align:top;}
+table.partition {display:inline-table;}
+

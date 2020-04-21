@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Gerrymander Dynamic Programming Demo</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('.static', filename='style.css') }}">
+        <script src="{{ url_for('static', filename='jquery.js') }}"></script>
+        <script src="{{ url_for('.static', filename='main.js') }}"></script>
+    </head>
+
+    <body>
+
+        <h1><a href="/dyna_prog">Gerrymander Dynamic Programming Demo</a></h1>
+
+        <div id="main-map">
+            <p id="board-size-control">
+                Rows: <input id="num-rows" type="number" min="2" max="5" value="3">
+                Columns: <input id="num-cols" type="number" min="2" max="5" value="5">
+            </p>
+            <div id="main-map-container"></div>
+            <p>
+                <button id="clear-population">clear population</button>
+                <button id="randomize-population">randomize population</button>
+                #Districts: <select id="num-districts"></select>
+                <button id="solve">gerrymander</button>
+            </p>
+        </div>
+        <table id="trace-table" class="trace">
+        </table>
+
+    </body>
+</html>
