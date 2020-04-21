@@ -1,24 +1,24 @@
 """A dynamic programming gerrymandering optimizer."""
 
-from collections import namedtuple
+from typing import Any, Generator, Tuple, NamedTuple, List, Set, Dict
 
-from typing import Any, Generator, Tuple, List, Set, Dict
+District = Tuple[int, ...]
+Districts = Tuple[District, ...]
 
-State = namedtuple('State', 'rows, cols, grid')
-
-Index = int
-IntDistrict = Tuple[Index, ...]
-IntDistricts = Tuple[IntDistrict, ...]
-
-Coord = Tuple[int, int]
-CoordDistrict = Tuple[Coord, ...]
-CoordDistricts = Tuple[CoordDistrict, ...]
+State = NamedTuple('State', (('rows', int), ('cols', int), ('grid', str)))
+RecursiveCall = NamedTuple('RecursiveCall', (('first_district', District), ('sub_trace', 'Trace')))
+Trace = NamedTuple('Trace', (
+    ('depth', int),
+    ('state', State),
+    ('calls', List[RecursiveCall]),
+    ('partitions', List[Districts]),
+))
 
 CacheKey = Tuple[State, int]
 
 
 def populated_neighbors(index, state):
-    # type: (Index, State) -> List[Index]
+    # type: (int, State) -> List[int]
     result = [index - state.cols, index + state.cols]
     if index % state.cols != 0:
         result.append(index - 1)
@@ -28,12 +28,12 @@ def populated_neighbors(index, state):
 
 
 def all_first_districts(state, size):
-    # type: (State, int) -> Generator[IntDistrict, None, None]
+    # type: (State, int) -> Generator[District, None, None]
 
-    tried = set() # type: Set[IntDistrict]
+    tried = set() # type: Set[District]
 
     def all_first_districts_of_size(frontier, district):
-        # type: (Set[Index], Tuple[Index, ...]) -> Generator[IntDistrict, None, None]
+        # type: (Set[int], Tuple[int, ...]) -> Generator[District, None, None]
         for index in sorted(frontier):
             new_district = tuple(sorted([*district, index]))
             if new_district in tried:
@@ -58,7 +58,7 @@ def is_connected(state):
     root_index = min(state.grid.find('B'), state.grid.find('R'))
     if root_index == -1:
         return True
-    visited = set() # type: Set[Index]
+    visited = set() # type: Set[int]
     frontier = [root_index]
     while frontier:
         index = frontier.pop(0)
@@ -70,7 +70,7 @@ def is_connected(state):
 
 
 def remove_district(state, district):
-    # type: (State, IntDistrict) -> State
+    # type: (State, District) -> State
     indices = set(district)
     return State(
         state.rows,
@@ -80,7 +80,7 @@ def remove_district(state, district):
 
 
 def score_partition(partition, state):
-    # type: (IntDistricts, State) -> Tuple[int, int]
+    # type: (Districts, State) -> Tuple[int, int]
     wins = 0
     draws = 0
     half = len(partition[0]) / 2
@@ -97,72 +97,40 @@ def score_partition(partition, state):
 
 
 def state_as_districts(state):
-    # type: (State) -> IntDistricts
+    # type: (State) -> Districts
     return (
         tuple(index for index, char in enumerate(state.grid) if char != '-'),
     )
 
 
-def index_to_coord(index, state):
-    # type: (Index, State) -> Coord
-    return (index // state.cols, index % state.cols)
+def gerrymander(state, district_size):
+    # type: (State, int) -> Trace
 
+    def _gerrymander(state, district_size, cache, depth=0):
+        # type: (State, int, Dict[CacheKey, List[Districts]], int) -> Trace
+        cache_key = (state, district_size)
+        calls = [] # type: List[RecursiveCall]
+        if cache_key not in cache:
+            partitions = set()
+            if sum(1 for char in state.grid if char in 'BR') == district_size:
+                partitions.add(state_as_districts(state))
+            else:
+                for first_district in all_first_districts(state, district_size):
+                    next_state = remove_district(state, first_district)
+                    if not is_connected(next_state):
+                        continue
+                    sub_trace = _gerrymander(next_state, district_size, cache, depth + 1)
+                    calls.append(RecursiveCall(first_district, sub_trace))
+                    for sub_partition in sub_trace.partitions:
+                        partitions.add(tuple(sorted((first_district, ) + sub_partition)))
+            partitions_list = sorted(partitions)
+            scores = [score_partition(partition, state) for partition in partitions_list]
+            best_score = max(scores)
+            cache[cache_key] = [
+                partition for partition, score
+                in zip(partitions_list, scores)
+                if score == best_score
+            ]
+        return Trace(depth, state, calls, cache[cache_key])
 
-def districts_to_map(state, districts):
-    # type: (State, IntDistricts) -> Dict[str, Any]
-    district_map = {} # type: Dict[Coord, int]
-    coord_districts = [] # type: List[CoordDistrict]
-    for district_id, district in enumerate(districts):
-        coord_district = tuple(index_to_coord(index, state) for index in district)
-        for coord in coord_district:
-            district_map[coord] = district_id
-        coord_districts.append(coord_district)
-    borders = [] # type: List[str]
-    for row in range(state.rows):
-        for col in range(1, state.cols):
-            if district_map.get((row, col - 1), -1) != district_map.get((row, col), -1):
-                borders.append(f'{row}-{col - 1}-{row}-{col}')
-    for col in range(state.cols):
-        for row in range(1, state.rows):
-            if district_map.get((row - 1, col), -1) != district_map.get((row, col), -1):
-                borders.append(f'{row - 1}-{col}-{row}-{col}')
-    return {
-        'districts': tuple(coord_districts),
-        'borders': borders,
-    }
-
-
-def gerrymander(state, district_size, cache, trace, depth=0):
-    # type: (State, int, Dict[CacheKey, List[IntDistricts]], Dict[str, Any], int) -> Generator[IntDistricts, None, None]
-    trace['depth'] = depth
-    trace['state'] = districts_to_map(state, state_as_districts(state))
-    trace['calls'] = [] # type: List[Dict[str, Any]]
-    trace['partitions'] = [] # type: List[Dict[str, Any]]
-    cache_key = (state, district_size)
-    if cache_key not in cache:
-        partitions = set()
-        if sum(1 for char in state.grid if char in 'BR') == district_size:
-            partitions.add(state_as_districts(state))
-        else:
-            for first_district in all_first_districts(state, district_size):
-                next_state = remove_district(state, first_district)
-                if not is_connected(next_state):
-                    continue
-                sub_trace = {} # type: Dict[str, Any]
-                sub_partitions = gerrymander(next_state, district_size, cache, sub_trace, depth + 1)
-                trace['calls'].append({
-                    'first_district': districts_to_map(state, (first_district,)),
-                    'sub_trace': sub_trace,
-                })
-                for sub_partition in sub_partitions:
-                    partitions.add(tuple(sorted((first_district, ) + sub_partition)))
-        partitions_list = sorted(partitions)
-        scores = [score_partition(partition, state) for partition in partitions_list]
-        best_score = max(scores)
-        cache[cache_key] = [
-            partition for partition, score
-            in zip(partitions_list, scores)
-            if score == best_score
-        ]
-    trace['partitions'] = list(districts_to_map(state, partition) for partition in cache[cache_key])
-    yield from cache[cache_key]
+    return _gerrymander(state, district_size, {})
