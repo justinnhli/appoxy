@@ -27,6 +27,12 @@ def populated_neighbors(index, state):
     return [index for index in result if 0 <= index < len(state.grid) and state.grid[index] != '-']
 
 
+def first_populated_block(state):
+    # type: (State) -> int
+    indices = [state.grid.find(char) for char in 'BR']
+    return min(index for index in indices if index != -1)
+
+
 def all_first_districts(state, size):
     # type: (State, int) -> Generator[District, None, None]
 
@@ -47,7 +53,7 @@ def all_first_districts(state, size):
                     new_district,
                 )
 
-    root_index = min(state.grid.find('B'), state.grid.find('R'))
+    root_index = first_populated_block(state)
     if root_index == -1:
         return
     yield from all_first_districts_of_size(set([root_index]), tuple())
@@ -55,7 +61,7 @@ def all_first_districts(state, size):
 
 def is_connected(state):
     # type: (State) -> bool
-    root_index = min(state.grid.find('B'), state.grid.find('R'))
+    root_index = first_populated_block(state)
     if root_index == -1:
         return True
     visited = set() # type: Set[int]
