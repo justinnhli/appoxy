@@ -67,7 +67,19 @@ def to_jsonable(trace):
             {
                 'first_district': districts_to_map(trace.state, (first_district,)),
                 'sub_trace': to_jsonable(sub_trace),
-            } for first_district, sub_trace in trace.calls
+                'sub_partitions': [
+                    districts_to_map(trace.state, partition)
+                    for partition in sub_partitions
+                ],
+            } for first_district, sub_trace, sub_partitions in trace.calls
+        ],
+        'all_partitions': [
+            districts_to_map(trace.state, partition)
+            for partition in trace.partitions
+        ],
+        'best_partitions': [
+            districts_to_map(trace.state, partition)
+            for partition in trace.partitions
         ],
         'partitions': [
             districts_to_map(trace.state, partition)

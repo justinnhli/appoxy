@@ -23,9 +23,14 @@ table.electoral-map td.border.active {background-color:#000000;}
 table.electoral-map td.border-toggle {cursor:default;}
 table.electoral-map td.border-toggle div {width:100%; font-size:0.075em;}
 
-h3 {display:inline; padding:1em;}
-table.trace {border-collapse:collapse; margin-left:3em;}
-table.trace > tr > td {border:1px solid #000000; padding:5px;}
-td.district-td {vertical-align:top;}
+#trace-table table {background-color:#FFFFFF; cursor:pointer;}
+#trace-table tr.base-case:hover {background-color:#EEEEEE; cursor:default;}
+#trace-table tr.recursive-case:hover {background-color:#EEEEEE; cursor:pointer;}
+#trace-table td.prologue {border-style:none;}
+
+h2, h3 {display:inline;}
+table.trace {border-collapse:collapse; margin-left:3em; margin-top:1em;}
+table.trace > tr > td {border:1px solid #000000;}
+td.district-td {vertical-align:top; padding-left:2em; padding-top:1em; padding-bottom:1em;}
 table.partition {display:inline-table;}
 

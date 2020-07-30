@@ -6,11 +6,17 @@ District = Tuple[int, ...]
 Districts = Tuple[District, ...]
 
 State = NamedTuple('State', (('rows', int), ('cols', int), ('grid', str)))
-RecursiveCall = NamedTuple('RecursiveCall', (('first_district', District), ('sub_trace', 'Trace')))
+RecursiveCall = NamedTuple('RecursiveCall', (
+    ('first_district', District),
+    ('sub_trace', 'Trace'),
+    ('partitions', List[Districts]),
+))
 Trace = NamedTuple('Trace', (
     ('depth', int),
     ('state', State),
     ('calls', List[RecursiveCall]),
+    ('all_partitions', List[Districts]),
+    ('best_partitions', List[Districts]),
     ('partitions', List[Districts]),
 ))
 
@@ -126,9 +132,13 @@ def gerrymander(state, district_size):
                     if not is_connected(next_state):
                         continue
                     sub_trace = _gerrymander(next_state, district_size, cache, depth + 1)
-                    calls.append(RecursiveCall(first_district, sub_trace))
+                    if not sub_trace:
+                        continue
+                    sub_partitions = set()
                     for sub_partition in sub_trace.partitions:
-                        partitions.add(tuple(sorted((first_district, ) + sub_partition)))
+                        sub_partitions.add(tuple(sorted((first_district, ) + sub_partition)))
+                    calls.append(RecursiveCall(first_district, sub_trace, sub_partitions))
+                    partitions |= sub_partitions
             partitions_list = sorted(partitions)
             scores = [score_partition(partition, state) for partition in partitions_list]
             best_score = max(scores)
@@ -137,6 +147,6 @@ def gerrymander(state, district_size):
                 in zip(partitions_list, scores)
                 if score == best_score
             ]
-        return Trace(depth, state, calls, cache[cache_key])
+        return Trace(depth, state, calls, partitions_list, cache[cache_key], cache[cache_key])
 
     return _gerrymander(state, district_size, {})
