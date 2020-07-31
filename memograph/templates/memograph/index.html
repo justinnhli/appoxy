@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Memory Diagrammer</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('.static', filename='style.css') }}">
+        <script src="{{ url_for('static', filename='jquery.js') }}"></script>
+        <script src="{{ url_for('static', filename='viz.js') }}"></script>
+        <script src="{{ url_for('.static', filename='main.js') }}"></script>
+    </head>
+    <body>
+        <div id="lhs">
+            <textarea id="input">
+            </textarea><br>
+            <button id="drawButton">Draw</button>
+        </div>
+        <div id="rhs"></div>
+    </body>
+</html>
