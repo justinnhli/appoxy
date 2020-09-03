@@ -1,6 +1,6 @@
 Memory = OptSpace ( Stack OptSpace )? ( Heap OptSpace )? OptSpace;
 
-Stack = "stack" OptSpace "[" OptSpace ( StackFrame OptSpace ( "," OptSpace StackFrame OptSpace )* )? "]" ";";
+Stack = "stack" OptSpace "{" OptSpace ( StackFrame OptSpace ( "," OptSpace StackFrame OptSpace )* )? "}" ";";
 StackFrame = StackFrameName OptSpace "{" OptSpace Declarations OptSpace "}";
 StackFrameName = ( NameSpace OptSpace "." OptSpace )* FunctionName OptSpace "(" OptSpace ( StackFrameArgs )? OptSpace ")";
 StackFrameArgs = StackFrameArg ( OptSpace "," OptSpace StackFrameArg )*;
