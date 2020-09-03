@@ -1,15 +1,15 @@
 // On load
 $(function () {
     "use strict";
-    var $bayes = $("#bayes");
+    var $input = $("#input");
     var $rhs = $("#rhs");
 
     function draw() {
-        var network = $bayes.val();
-        $.post("/bayes/parse", network).done(function(response) {
+        var network = $input.val();
+        $.post("/memograph/parse", network).done(function(response) {
             $rhs.empty();
-            if (response.substring(0, 5) === "Error") {
-                $rhs.append(response);
+            if (response.substring(0, 5) === "ERROR") {
+                $rhs.append($('<pre><code>' + response + '</code></pre>'));
             } else {
                 $rhs.append(Viz(response));
             }
@@ -32,7 +32,7 @@ $(function () {
     function loadNetwork() {
         var hash = deparam(location.hash.substr(1));
         if (hash["network"] !== undefined) {
-            $bayes.val(window.atob(hash["network"]));
+            $input.val(window.atob(hash["network"]));
         }
     }
 

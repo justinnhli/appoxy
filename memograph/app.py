@@ -27,5 +27,5 @@ def parse():
     try:
         mem_parser = MemographWalker()
         return memory_to_dot(*mem_parser.parse(text))
-    except KeyError, ValueError, SyntaxError as err:
-        return str(err)
+    except (KeyError, ValueError, SyntaxError) as err:
+        return 'ERROR ' + str(err)
