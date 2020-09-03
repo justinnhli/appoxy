@@ -1,0 +1,129 @@
+Memory = OptSpace ( Stack OptSpace )? ( Heap OptSpace )? OptSpace;
+
+Stack = "stack" OptSpace "{" OptSpace ( StackFrame OptSpace ( "," OptSpace StackFrame OptSpace )* )? "}" ";";
+StackFrame = StackFrameName OptSpace "{" OptSpace Declarations OptSpace "}";
+StackFrameName = ( NameSpace OptSpace "." OptSpace )* FunctionName OptSpace "(" OptSpace ( StackFrameArgs )? OptSpace ")";
+StackFrameArgs = StackFrameArg ( OptSpace "," OptSpace StackFrameArg )*;
+StackFrameArg = StackFrameArgTypeVar
+              | Type
+              | Identifier;
+StackFrameArgTypeVar = Type Space Identifier;
+
+NameSpace = Identifier;
+FunctionName = Identifier;
+Arguments = Argument OptSpace ( "," OptSpace Argument OptSpace )*;
+Argument = Identifier
+         | Null
+         | CharValue
+         | IntValue
+         | BooleanValue;
+
+Heap = Declarations;
+
+Declarations = ( Declaration ( OptSpace Declaration )* )?;
+
+Declaration = PointerDeclaration
+            | PrimitiveDeclaration;
+
+PointerDeclaration = ArrayDeclaration
+                   | StructDeclaration
+                   | StringDeclaration;
+
+PrimitiveDeclaration = CharDeclaration
+                     | IntDeclaration
+                     | BooleanDeclaration;
+
+Type = ArrayType
+     | StructType
+     | StringType
+     | CharType
+     | IntType
+     | BooleanType;
+
+ArrayDeclaration = ArrayType Space Identifier OptSpace "=" OptSpace ArrayValue OptSpace ";";
+StructDeclaration = StructType Space Identifier OptSpace "=" OptSpace StructValue OptSpace ";";
+StringDeclaration = StringType Space Identifier OptSpace "=" OptSpace StringValue OptSpace ";";
+CharDeclaration = CharType Space Identifier OptSpace "=" OptSpace CharValue OptSpace ";";
+IntDeclaration = IntType Space Identifier OptSpace "=" OptSpace IntValue OptSpace ";";
+BooleanDeclaration = BooleanType Space Identifier OptSpace "=" OptSpace BooleanValue OptSpace ";";
+
+Keyword = TypeKeyword
+        | ValueKeyword;
+
+TypeKeyword = StringType
+            | CharType
+            | IntType
+            | BooleanType;
+
+ValueKeyword = Null
+             | True
+             | False;
+
+ArrayType = NonArrayType ( "[]" )+;
+NonArrayType = StructType
+             | StringType
+             | CharType
+             | IntType
+             | BooleanType;
+
+StructType = RawStructType
+           - Keyword;
+RawStructType = upper ( alnum )+;
+
+StringType = "String";
+
+Identifier = RawIdentifier
+           - Keyword;
+RawIdentifier = alpha ( IdentifierChar )*;
+IdentifierChar = alnum
+               | "_";
+
+TypedArray = ArrayType OptSpace Array;
+ArrayValue = Array
+           | Identifier
+           | Null;
+Array = "{" OptSpace ( ArrayItem OptSpace ( "," OptSpace ArrayItem OptSpace )* )? "}";
+ArrayItem = TypedArray
+      | TypedStruct
+      | StringValue
+      | Identifier
+      | Null
+      | CharValue
+      | IntValue
+      | BooleanValue;
+
+TypedStruct = StructType OptSpace Struct;
+StructValue = Struct
+            | Identifier
+            | Null;
+Struct = "{" ( OptSpace Declaration OptSpace )+ "}";
+Null = "null";
+
+StringValue = String
+            | Identifier
+            | Null;
+String = '"' ( StringChar )* '"';
+StringChar = print
+           - '"';
+
+CharType = 'char';
+CharValue = Char;
+Char = "'" print "'";
+
+IntType = 'int';
+IntValue = Int;
+Int = ( "-" )? ( digit )+;
+
+BooleanType = 'boolean';
+BooleanValue = Boolean;
+Boolean = True
+        | False;
+True = "true";
+False = "false";
+
+Comment = '//' ( print )* newline;
+Space = ( SpaceChar )+;
+OptSpace = ( SpaceChar )*;
+SpaceChar = Comment
+          | " "
+          | newline;
