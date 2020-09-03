@@ -2,11 +2,15 @@ Memory = OptSpace ( Stack OptSpace )? ( Heap OptSpace )? OptSpace;
 
 Stack = "stack" OptSpace "[" OptSpace ( StackFrame OptSpace ( "," OptSpace StackFrame OptSpace )* )? "]" ";";
 StackFrame = StackFrameName OptSpace "{" OptSpace Declarations OptSpace "}";
-StackFrameName = ( NameSpace OptSpace "." OptSpace )* FunctionName OptSpace "(" OptSpace ( Arguments OptSpace )? ")";
+StackFrameName = ( NameSpace OptSpace "." OptSpace )* FunctionName OptSpace "(" OptSpace ( StackFrameArgs )? OptSpace ")";
+StackFrameArgs = StackFrameArg ( OptSpace "," OptSpace StackFrameArg )*;
+StackFrameArg = StackFrameArgTypeVar
+              | Type
+              | Identifier;
+StackFrameArgTypeVar = Type Space Identifier;
 
 NameSpace = Identifier;
 FunctionName = Identifier;
-# FIXME allow (type + variable), variable, or value
 Arguments = Argument OptSpace ( "," OptSpace Argument OptSpace )*;
 Argument = Identifier
          | Null
@@ -28,6 +32,13 @@ PointerDeclaration = ArrayDeclaration
 PrimitiveDeclaration = CharDeclaration
                      | IntDeclaration
                      | BooleanDeclaration;
+
+Type = ArrayType
+     | StructType
+     | StringType
+     | CharType
+     | IntType
+     | BooleanType;
 
 ArrayDeclaration = ArrayType Space Identifier OptSpace "=" OptSpace ArrayValue OptSpace ";";
 StructDeclaration = StructType Space Identifier OptSpace "=" OptSpace StructValue OptSpace ";";
