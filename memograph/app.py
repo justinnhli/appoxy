@@ -1,6 +1,6 @@
 from os.path import basename, dirname, join as join_path
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, redirect, url_for
 
 from .memograph import MemographWalker, memory_to_dot
 
@@ -19,6 +19,11 @@ app = Blueprint(
 @app.route('/')
 def root():
     return render_template(join_path(APP_NAME, 'index.html'))
+
+@app.route('/index.html')
+def index():
+    return redirect(url_for('.root'))
+
 
 @app.route('/syntax.html')
 def syntax():
