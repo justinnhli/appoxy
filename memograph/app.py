@@ -20,6 +20,10 @@ app = Blueprint(
 def root():
     return render_template(join_path(APP_NAME, 'index.html'))
 
+@app.route('/syntax.html')
+def syntax():
+    return render_template(join_path(APP_NAME, 'syntax.html'))
+
 
 @app.route('/parse', methods=['POST'])
 def parse():
