@@ -378,7 +378,6 @@ def stack_to_dot(stack):
         return [], []
     references = [] # type: List[str]
     results = [] # type: List[str]
-    results.append('{STACK')
     for index, (frame_name, frame) in enumerate(stack):
         frame_dot, new_references = namespace_to_dot(
             frame,
@@ -388,7 +387,7 @@ def stack_to_dot(stack):
         )
         results.append(frame_dot)
         references.extend(new_references)
-    dot = '_stack [shape="record", label="{' + ' | '.join(results) + ' }}"]'
+    dot = '_stack [shape="record", color="#A0A0A0", label="{{STACK | ' + ' | | '.join(results) + ' }}"]'
     return [dot], references
 
 
@@ -396,7 +395,7 @@ def string_to_dot(typed_value):
     # type: (TypedValue) -> Tuple[List[str], List[str]]
     """Serialize a String object to Graphviz format."""
     string = f'{typed_value.value}'.replace('"', r'\"')
-    dot = f'{typed_value.name} [shape="record", label="{{{{String | {string}}}}}"]'
+    dot = f'{typed_value.name} [shape="record", color="#A0A0A0", label="{{{{String | {string}}}}}"]'
     return [dot], []
 
 
@@ -421,7 +420,7 @@ def array_to_dot(typed_value):
         ' | '.join(items),
         '} }',
     ])
-    dot = f'{typed_value.name} [shape="record", label="{{{label}}}"]'
+    dot = f'{typed_value.name} [shape="record", color="#A0A0A0", label="{{{label}}}"]'
     return [dot], references
 
 
@@ -435,7 +434,7 @@ def struct_to_dot(typed_value):
         typed_value.name,
         '',
     )
-    dot = f'{typed_value.name} [shape="record", label="{record}"]'
+    dot = f'{typed_value.name} [shape="record", color="#A0A0A0", label="{record}"]'
     return [dot], references
 
 
@@ -469,6 +468,7 @@ def memory_to_dot(stack, heap):
     output = []
     output.append('digraph {')
     output.append(indent('rankdir="LR"', 4 * ' '))
+    output.append(indent('node [fontsize=10]', 4 * ' '))
     output.append(indent('\n'.join(stack_dot), 4 * ' '))
     output.append(indent('subgraph cluster_heap {', 4 * ' '))
     output.append(indent('label="HEAP"', 8 * ' '))
