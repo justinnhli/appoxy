@@ -3,7 +3,7 @@
 from collections import namedtuple
 from importlib import import_module
 from os import listdir
-from os.path import dirname, isdir, realpath, join as join_path
+from pathlib import Path
 
 from flask import abort, Flask, render_template, send_from_directory, url_for, redirect
 
@@ -12,11 +12,9 @@ IGNORE_DIRS = ['blueprint_template', 'static', 'templates']
 app = Flask(__name__)
 
 modules = {}
-for module_name in listdir(dirname(realpath(__file__))):
-    if not isdir(module_name):
-        continue
-    if module_name[0] in '._':
-        continue
+
+for module_path in Path(__file__).expanduser().resolve().parent.glob('*/__init__.py'):
+    module_name = module_path.parent.name
     if module_name in IGNORE_DIRS:
         continue
     module = import_module(module_name)
