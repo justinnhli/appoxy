@@ -387,7 +387,7 @@ def stack_to_dot(stack):
         )
         results.append(frame_dot)
         references.extend(new_references)
-    dot = '_stack [shape="record", color="#A0A0A0", label="{{STACK | ' + ' | | '.join(results) + ' }}"]'
+    dot = '_stack [shape="record", color="#A0A0A0", label="{{' + ' | | '.join(results) + ' }}"]'
     return [dot], references
 
 
@@ -469,7 +469,10 @@ def memory_to_dot(stack, heap):
     output.append('digraph {')
     output.append(indent('rankdir="LR"', 4 * ' '))
     output.append(indent('node [fontsize=10]', 4 * ' '))
-    output.append(indent('\n'.join(stack_dot), 4 * ' '))
+    output.append(indent('subgraph cluster_stack {', 4 * ' '))
+    output.append(indent('label="STACK"', 8 * ' '))
+    output.append(indent('\n'.join(stack_dot), 8 * ' '))
+    output.append(indent('}', 4 * ' '))
     output.append(indent('subgraph cluster_heap {', 4 * ' '))
     output.append(indent('label="HEAP"', 8 * ' '))
     output.append(indent('\n'.join(heap_dot), 8 * ' '))
