@@ -412,7 +412,7 @@ def array_to_dot(typed_value):
             items.append(f'{{ {index} | <{index}> {child.value} }}')
         else:
             items.append(f'{{ {index} | <{index}> }}')
-            references.append(f'{typed_value.name}:{index} -> _{child.value.name}')
+            references.append(f'_{typed_value.name}:{index} -> _{child.value.name}')
     label = ' '.join([
         '{',
         typed_value.type,
