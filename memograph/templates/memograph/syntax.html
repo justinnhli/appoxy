@@ -35,20 +35,26 @@
 };
 
 AVLTree tree = {
-    Node root = node7;
+    Node root = node8;
     int size = 6;
 };
 
 Node node8 = {
     int value = 8;
     Node left = node6;
-    Node right = null;
+    Node right = node9;
 };
 
 Node node6 = {
     int value = 6;
     Node left = null;
     Node right = node7;
+};
+
+Node node9 = {
+    int value = 9;
+    Node left = null;
+    Node right = null;
 };
 
 Node node7 = {
@@ -58,17 +64,23 @@ Node node7 = {
 };
 </code></pre>
 <h2>Heap <a id="heap"></a></h2>
-<p>The heap section of a memograph input consists of multiple object declarations. Each declaration must have a type, followed by an identifier, followed by the member variables of that object. Here are two objects on the heap (<a href="index.html#network=Tm9kZSBub2RlOCA9IHsKICAgIGludCB2YWx1ZSA9IDg7CiAgICBOb2RlIGxlZnQgPSBub2RlNjsKICAgIE5vZGUgcmlnaHQgPSBudWxsOwp9OwoKTm9kZSBub2RlNiA9IHsKICAgIGludCB2YWx1ZSA9IDY7CiAgICBOb2RlIGxlZnQgPSBudWxsOwogICAgTm9kZSByaWdodCA9IG5vZGU3Owp9OwoKTm9kZSBub2RlNyA9IHsKICAgIGludCB2YWx1ZSA9IDc7CiAgICBOb2RlIGxlZnQgPSBudWxsOwogICAgTm9kZSByaWdodCA9IG51bGw7Cn07Cg%3D%3D">render</a>):</p>
+<p>The heap section of a memograph input consists of multiple object declarations. Each declaration must have a type, followed by an identifier, followed by the member variables of that object. Here are three objects on the heap (<a href="index.html#network=Tm9kZSBub2RlOCA9IHsKICAgIGludCB2YWx1ZSA9IDg7CiAgICBOb2RlIGxlZnQgPSBub2RlNjsKICAgIE5vZGUgcmlnaHQgPSBudWxsOwp9OwoKTm9kZSBub2RlNiA9IHsKICAgIGludCB2YWx1ZSA9IDY7CiAgICBOb2RlIGxlZnQgPSBudWxsOwogICAgTm9kZSByaWdodCA9IG5vZGU3Owp9OwoKTm9kZSBub2RlNyA9IHsKICAgIGludCB2YWx1ZSA9IDc7CiAgICBOb2RlIGxlZnQgPSBudWxsOwogICAgTm9kZSByaWdodCA9IG51bGw7Cn07Cg%3D%3D">render</a>):</p>
 <pre><code>Node node8 = {
     int value = 8;
     Node left = node6;
-    Node right = null;
+    Node right = node9;
 };
 
 Node node6 = {
     int value = 6;
     Node left = null;
     Node right = node7;
+};
+
+Node node9 = {
+    int value = 9;
+    Node left = null;
+    Node right = null;
 };
 
 Node node7 = {
@@ -89,7 +101,11 @@ Node node7 = {
             Node right = null;
         };
     };
-    Node right = null;
+    Node right = {
+        int value = 9;
+        Node left = null;
+        Node right = null;
+    };
 };
 </code></pre>
 <p>Arrays can be drawn as well (<a href="index.html#network=U3RyaW5nW10gc3RyaW5ncyA9IHsKICAgICJVbml0ZWQgU3RhdGVzIiwKICAgICJDYW5hZGEiLAogICAgIk1leGljbyIsCiAgICAiUGFuYW1hIgp9Ow%3D%3D">render</a>):</p>
