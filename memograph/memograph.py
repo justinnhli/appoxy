@@ -359,7 +359,7 @@ def namespace_to_dot(namespace, title, parent_name, port_prefix):
             values.append(f'<{port_name}> {child.value}')
         else:
             values.append(f'<{port_name}>')
-            references.append(f'{parent_name}:{port_name} -> {child.value.name}')
+            references.append(f'_{parent_name}:{port_name} -> _{child.value.name}')
     label = []
     label.append(title)
     if types:
@@ -382,12 +382,12 @@ def stack_to_dot(stack):
         frame_dot, new_references = namespace_to_dot(
             frame,
             frame_name,
-            '_stack',
+            '',
             str(index),
         )
         results.append(frame_dot)
         references.extend(new_references)
-    dot = '_stack [shape="record", color="#A0A0A0", label="{{' + ' | | '.join(results) + ' }}"]'
+    dot = '_ [shape="record", color="#A0A0A0", label="{{' + ' | | '.join(results) + ' }}"]'
     return [dot], references
 
 
@@ -395,7 +395,7 @@ def string_to_dot(typed_value):
     # type: (TypedValue) -> Tuple[List[str], List[str]]
     """Serialize a String object to Graphviz format."""
     string = f'{typed_value.value}'.replace('"', r'\"')
-    dot = f'{typed_value.name} [shape="record", color="#A0A0A0", label="{{{{String | {string}}}}}"]'
+    dot = f'_{typed_value.name} [shape="record", color="#A0A0A0", label="{{{{String | {string}}}}}"]'
     return [dot], []
 
 
@@ -412,7 +412,7 @@ def array_to_dot(typed_value):
             items.append(f'{{ {index} | <{index}> {child.value} }}')
         else:
             items.append(f'{{ {index} | <{index}> }}')
-            references.append(f'{typed_value.name}:{index} -> {child.value.name}')
+            references.append(f'{typed_value.name}:{index} -> _{child.value.name}')
     label = ' '.join([
         '{',
         typed_value.type,
@@ -420,7 +420,7 @@ def array_to_dot(typed_value):
         ' | '.join(items),
         '} }',
     ])
-    dot = f'{typed_value.name} [shape="record", color="#A0A0A0", label="{{{label}}}"]'
+    dot = f'_{typed_value.name} [shape="record", color="#A0A0A0", label="{{{label}}}"]'
     return [dot], references
 
 
@@ -434,7 +434,7 @@ def struct_to_dot(typed_value):
         typed_value.name,
         '',
     )
-    dot = f'{typed_value.name} [shape="record", color="#A0A0A0", label="{record}"]'
+    dot = f'_{typed_value.name} [shape="record", color="#A0A0A0", label="{record}"]'
     return [dot], references
 
 
