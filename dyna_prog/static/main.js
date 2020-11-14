@@ -349,110 +349,104 @@ $(function () {
 
     function create_trace_list(trace, list) {
         var calls = trace.calls;
-        if (calls.length == 0) {
-            var li = $('<li>');
-            li.append('Only one district remaining: ');
-            li.append(create_map(
-                create_districts_demographics(trace.state.districts),
-                trace.state.borders,
-                ''
-            ).addClass('partition'));
-            li.append(' (base case)');
-            list.append(li);
-        } else {
-            var li = $('<li>');
-            li.append('Gerrymandering ')
-            li.append(create_map(
-                create_districts_demographics(trace.state.districts),
-                trace.state.borders,
-                ''
-            ).addClass('partition'));
-            li.append(' into ' + trace.num_districts + ' districts');
+        var num_districts = trace.num_districts;
 
+        var li = $('<li>');
+        li.append('Gerrymandering ')
+        li.append(create_map(
+            create_districts_demographics(trace.state.districts),
+            trace.state.borders,
+            ''
+        ).addClass('partition'));
+        li.append(' into ' + num_districts + ' districts');
+        if (num_districts == 1) {
+            li.append(' (base case)');
+        } else {
             var trace_toggle = $('<a href="">toggle trace</a>').click(function (event) {
                 $('#' + trace.id).toggle();
                 return false;
             });
-            list.append(li.append(' (').append(trace_toggle).append(')'));
-
-            var child_list = $('<ul class="first-districts">');
-            if (trace.depth % 2 == 0) {
-                child_list.addClass('even');
-            } else {
-                child_list.addClass('odd');
-            }
-            for (var i = 0; i < calls.length; i++) {
-                var call = calls[i];
-                var div = $('<div>');
-
-                div.append('Trying ');
-                div.append(create_map(
-                    create_districts_demographics(call.first_district.districts),
-                    call.first_district.borders,
-                    ''
-                ).addClass('partition'));
-                div.append(' as the first district and recursing on ');
-                div.append(create_map(
-                    create_districts_demographics(call.trace.state.districts),
-                    call.trace.state.borders,
-                    ''
-                ).addClass('partition'));
-                var call_id = call.trace.id + '-call';
-                var trace_toggle = $('<a href="">toggle trace</a>').attr('id', call_id + '-toggle');
-                trace_toggle.click(function (event) {
-                    var toggle_id = event.target.id;
-                    $('#' + event.target.id.substring(0, toggle_id.length - 7)).toggle();
-                    return false;
-                });
-                div.append(' (').append(trace_toggle).append(')').append('<br>');
-
-                var child_traces = $('<div>');
-                child_traces.attr('id', call.trace.id + '-call');
-                var sublist = $('<ul class="trace">');
-                create_trace_list(call.trace, sublist);
-                child_traces.append(sublist).toggle();
-                div.append(child_traces);
-
-                div.append('Candidate Gerrymanders: ');
-                for (var j = 0; j < call.partitions.length; j++) {
-                    div.append(create_map(
-                        create_districts_demographics(call.partitions[j].districts),
-                        call.partitions[j].borders,
-                        ''
-                    ).addClass('partition'));
-                    div.append('&nbsp;');
-                }
-                child_list.append($('<li>').append(div));
-            }
-            var list_item = $('<li>').append(child_list);
-            list_item.toggle();
-            list_item.attr('id', trace.id);
-            list.append(list_item);
-
-            var child = $('<li>');
-            child.append('All Candidate Gerrymanders: ');
-            for (var i = 0; i < trace.all_partitions.length; i++) {
-                child.append(create_map(
-                    create_districts_demographics(trace.all_partitions[i].districts),
-                    trace.all_partitions[i].borders,
-                    ''
-                ).addClass('partition'));
-                child.append('&nbsp;');
-            }
-            list.append(child);
-
-            var child = $('<li>');
-            child.append('Best Gerrymanders: ');
-            for (var i = 0; i < trace.best_partitions.length; i++) {
-                child.append(create_map(
-                    create_districts_demographics(trace.best_partitions[i].districts),
-                    trace.best_partitions[i].borders,
-                    ''
-                ).addClass('partition'));
-                child.append('&nbsp;');
-            }
-            list.append(child);
+            li.append(' (').append(trace_toggle).append(')');
         }
+        list.append(li);
+
+        var child_list = $('<ul class="first-districts">');
+        if (trace.num_districts % 2 == 0) {
+            child_list.addClass('even');
+        } else {
+            child_list.addClass('odd');
+        }
+        for (var i = 0; i < calls.length; i++) {
+            var call = calls[i];
+            var div = $('<div>');
+
+            div.append('Trying ');
+            div.append(create_map(
+                create_districts_demographics(call.first_district.districts),
+                call.first_district.borders,
+                ''
+            ).addClass('partition'));
+            div.append(' as the first district and recursing on ');
+            div.append(create_map(
+                create_districts_demographics(call.trace.state.districts),
+                call.trace.state.borders,
+                ''
+            ).addClass('partition'));
+            var call_id = call.trace.id + '-call';
+            var trace_toggle = $('<a href="">toggle trace</a>').attr('id', call_id + '-toggle');
+            trace_toggle.click(function (event) {
+                var toggle_id = event.target.id;
+                $('#' + event.target.id.substring(0, toggle_id.length - 7)).toggle();
+                return false;
+            });
+            div.append(' (').append(trace_toggle).append(')').append('<br>');
+
+            var child_traces = $('<div>');
+            child_traces.attr('id', call.trace.id + '-call');
+            var sublist = $('<ul class="trace">');
+            create_trace_list(call.trace, sublist);
+            child_traces.append(sublist).toggle();
+            div.append(child_traces);
+
+            div.append('Candidate Gerrymanders: ');
+            for (var j = 0; j < call.partitions.length; j++) {
+                div.append(create_map(
+                    create_districts_demographics(call.partitions[j].districts),
+                    call.partitions[j].borders,
+                    ''
+                ).addClass('partition'));
+                div.append('&nbsp;');
+            }
+            child_list.append($('<li>').append(div));
+        }
+        var list_item = $('<li>').append(child_list);
+        list_item.toggle();
+        list_item.attr('id', trace.id);
+        list.append(list_item);
+
+        var child = $('<li>');
+        child.append('All Candidate Gerrymanders: ');
+        for (var i = 0; i < trace.all_partitions.length; i++) {
+            child.append(create_map(
+                create_districts_demographics(trace.all_partitions[i].districts),
+                trace.all_partitions[i].borders,
+                ''
+            ).addClass('partition'));
+            child.append('&nbsp;');
+        }
+        list.append(child);
+
+        var child = $('<li>');
+        child.append('Best Gerrymanders: ');
+        for (var i = 0; i < trace.best_partitions.length; i++) {
+            child.append(create_map(
+                create_districts_demographics(trace.best_partitions[i].districts),
+                trace.best_partitions[i].borders,
+                ''
+            ).addClass('partition'));
+            child.append('&nbsp;');
+        }
+        list.append(child);
     }
 
     function populate_num_districts() {
