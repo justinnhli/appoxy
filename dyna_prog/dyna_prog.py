@@ -17,10 +17,13 @@ Trace = NamedTuple('Trace', (
     ('calls', List[RecursiveCall]),
     ('all_partitions', List[Districts]),
     ('best_partitions', List[Districts]),
-    ('partitions', List[Districts]),
 ))
 
 CacheKey = Tuple[State, int]
+CacheValue = NamedTuple('CacheValue', (
+    ('all_partitions', List[Districts]),
+    ('best_partitions', List[Districts]),
+))
 
 
 def populated_neighbors(index, state):
@@ -119,13 +122,13 @@ def gerrymander(state, district_size):
     # type: (State, int) -> Trace
 
     def _gerrymander(state, district_size, cache, depth=0):
-        # type: (State, int, Dict[CacheKey, List[Districts]], int) -> Trace
+        # type: (State, int, Dict[CacheKey, CacheValue], int) -> Trace
         cache_key = (state, district_size)
         calls = [] # type: List[RecursiveCall]
         if cache_key not in cache:
-            partitions = set()
+            all_partitions = set()
             if sum(1 for char in state.grid if char in 'BR') == district_size:
-                partitions.add(state_as_districts(state))
+                all_partitions.add(state_as_districts(state))
             else:
                 for first_district in all_first_districts(state, district_size):
                     next_state = remove_district(state, first_district)
@@ -135,18 +138,21 @@ def gerrymander(state, district_size):
                     if not sub_trace:
                         continue
                     sub_partitions = set()
-                    for sub_partition in sub_trace.partitions:
+                    for sub_partition in sub_trace.best_partitions:
                         sub_partitions.add(tuple(sorted((first_district, ) + sub_partition)))
                     calls.append(RecursiveCall(first_district, sub_trace, sub_partitions))
-                    partitions |= sub_partitions
-            partitions_list = sorted(partitions)
-            scores = [score_partition(partition, state) for partition in partitions_list]
+                    all_partitions |= sub_partitions
+            all_partitions = sorted(all_partitions)
+            scores = [score_partition(partition, state) for partition in all_partitions]
             best_score = max(scores)
-            cache[cache_key] = [
+            best_partitions = [
                 partition for partition, score
-                in zip(partitions_list, scores)
+                in zip(all_partitions, scores)
                 if score == best_score
             ]
-        return Trace(depth, state, calls, partitions_list, cache[cache_key], cache[cache_key])
+            cache[cache_key] = CacheValue(all_partitions, best_partitions)
+        else:
+            all_partitions, best_partitions = cache[cache_key]
+        return Trace(depth, state, calls, all_partitions, best_partitions)
 
     return _gerrymander(state, district_size, {})

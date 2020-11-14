@@ -75,15 +75,11 @@ def to_jsonable(trace):
         ],
         'all_partitions': [
             districts_to_map(trace.state, partition)
-            for partition in trace.partitions
+            for partition in trace.all_partitions
         ],
         'best_partitions': [
             districts_to_map(trace.state, partition)
-            for partition in trace.partitions
-        ],
-        'partitions': [
-            districts_to_map(trace.state, partition)
-            for partition in trace.partitions
+            for partition in trace.best_partitions
         ],
     }
 
