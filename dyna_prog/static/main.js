@@ -361,12 +361,14 @@ $(function () {
             list.append(li);
         } else {
             var li = $('<li>');
-            li.append('Solving ')
+            li.append('Gerrymandering ')
             li.append(create_map(
                 create_districts_demographics(trace['state']['districts']),
                 trace['state']['borders'],
                 ''
             ).addClass('partition'));
+            li.append(' into ' + trace['num_districts'] + ' districts');
+
             var trace_toggle = $('<a href="">toggle trace</a>').click(function (event) {
                 $('#' + trace['id']).toggle();
                 return false;

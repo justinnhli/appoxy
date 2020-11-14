@@ -14,6 +14,7 @@ RecursiveCall = NamedTuple('RecursiveCall', (
 Trace = NamedTuple('Trace', (
     ('depth', int),
     ('state', State),
+    ('num_districts', int),
     ('calls', List[RecursiveCall]),
     ('all_partitions', List[Districts]),
     ('best_partitions', List[Districts]),
@@ -118,7 +119,7 @@ def state_as_districts(state):
     )
 
 
-def gerrymander(state, district_size):
+def gerrymander(state, num_districts, district_size):
     # type: (State, int) -> Trace
 
     def _gerrymander(state, district_size, cache, depth=0):
@@ -153,6 +154,6 @@ def gerrymander(state, district_size):
             cache[cache_key] = CacheValue(all_partitions, best_partitions)
         else:
             all_partitions, best_partitions = cache[cache_key]
-        return Trace(depth, state, calls, all_partitions, best_partitions)
+        return Trace(depth, state, num_districts - depth, calls, all_partitions, best_partitions)
 
     return _gerrymander(state, district_size, {})

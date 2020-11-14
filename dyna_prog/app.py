@@ -64,6 +64,7 @@ def to_jsonable(trace, trace_id='trace-0'):
         'id': trace_id,
         'depth': trace.depth,
         'state': districts_to_map(trace.state, state_as_districts(trace.state)),
+        'num_districts': trace.num_districts,
         'calls': [
             {
                 'first_district': districts_to_map(trace.state, (first_district,)),
@@ -94,12 +95,13 @@ def solve():
     demographics = data['demographics']
     num_rows = len(demographics)
     num_cols = len(demographics[0])
+    num_districts = data['num_districts']
 
     grid = ''.join(''.join(row) for row in demographics)
     grid_size = sum(1 for char in grid if char in 'BR')
     # FIXME check divisibility here
-    district_size = grid_size // data['num_districts']
+    district_size = grid_size // num_districts
 
     state = State(num_rows, num_cols, grid)
-    trace = gerrymander(state, district_size)
+    trace = gerrymander(state, num_districts, district_size)
     return json.dumps(to_jsonable(trace))
