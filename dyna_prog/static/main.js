@@ -300,7 +300,8 @@ $(function () {
         for (var border_index = 0; border_index < borders.length; border_index += 1) {
             var border = table.find('#' + id_prefix + '-' + borders[border_index]);
             if (border.length > 0) {
-                border_toggle(border, true);
+                border.removeClass('inactive');
+                border.addClass('active');
             }
         }
         color_borders(table, demographics, borders, id_prefix);
@@ -476,39 +477,6 @@ $(function () {
                 selected = true;
             } else {
                 num_districts_selector.append('<option>' + factor + '</option>');
-            }
-        }
-    }
-
-    function border_toggle(border) {
-        var border_id = border.attr('id');
-        var turn_on = false;
-        if (arguments.length === 1) {
-            turn_on = (border.css('background-color') !== 'rgb(0, 0, 0)');
-        } else {
-            turn_on = arguments[1];
-        }
-        if (turn_on) {
-            border.removeClass('inactive');
-            border.addClass('active');
-            if (border_id.startsWith(MAIN_PREFIX)) {
-                var parts = border_id.split('-');
-                var row1 = parts[1];
-                var col1 = parts[2];
-                var row2 = parts[3];
-                var col2 = parts[4];
-                var border_coord = row1 + '-' + col1 + '-' + row2 + '-' + col2;
-            }
-        } else {
-            border.removeClass('active');
-            border.addClass('inactive');
-            if (border_id.startsWith(MAIN_PREFIX)) {
-                var parts = border_id.split('-');
-                var row1 = parts[1];
-                var col1 = parts[2];
-                var row2 = parts[3];
-                var col2 = parts[4];
-                var border_coord = row1 + '-' + col1 + '-' + row2 + '-' + col2;
             }
         }
     }
