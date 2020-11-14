@@ -580,11 +580,21 @@ $(function () {
         return obj;
     }
 
+    function bound_range(value, min, max) {
+        if (value < min) {
+            return min;
+        } else if (value > max) {
+            return max;
+        } else {
+            return value;
+        }
+    }
+
     function load_demographics() {
         var hashed_obj = deparam(location.hash.substr(1));
         if (hashed_obj.demographics !== undefined) {
-            var num_rows = hashed_obj.rows;
-            var num_cols = hashed_obj.cols;
+            var num_rows = bound_range(hashed_obj.rows, 2, 5);
+            var num_cols = bound_range(hashed_obj.cols, 2, 5);
             var demo_str = hashed_obj.demographics;
             var new_pop = [];
             for (var row = 0; row < num_rows; row += 1) {
