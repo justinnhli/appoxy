@@ -24,6 +24,5 @@ table.electoral-map td.border-toggle {cursor:default;}
 table.electoral-map td.border-toggle div {width:100%; font-size:0.075em;}
 
 h2, h3 {display:inline;}
-ul.first-districts > li {padding:0.125em 0;}
-ul.trace > li {list-style-type:none; padding:0.125em 0;}
-table.partition {display:inline-table;}
+ul.trace > li {list-style-type:none;}
+table.partition {display:inline-table; margin:0.5em 0;}
