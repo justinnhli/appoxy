@@ -332,16 +332,16 @@ $(function () {
             'demographics': DEMOGRAPHICS,
         };
         SOLUTION_DEMOGRAPHICS = copy(DEMOGRAPHICS);
-        var trace_table = $('#trace-list');
-        trace_table.empty();
+        var trace_list = $('#trace-list');
+        trace_list.html('<h3>Solving; this will take a moment...</h3>');
         $.post('/dyna_prog/solve', JSON.stringify(data))
             .done(function(response) {
-                trace_table.empty();
+                trace_list.empty();
                 response = JSON.parse(response);
                 create_trace_list(response, $('#trace-list'));
             })
             .fail(function () {
-                $('#solutions').html('Optimization failed (took too long)');
+                trace_list.html('Optimization failed (took too long)');
             });
     }
 
