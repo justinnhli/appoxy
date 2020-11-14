@@ -408,23 +408,23 @@ $(function () {
                 ).addClass('partition'));
                 title.append($('<h3> as the first district and recursing on </h3>'));
                 title.append(create_map(
-                    create_districts_demographics(call['sub_trace']['state']['districts']),
-                    call['sub_trace']['state']['borders'],
+                    create_districts_demographics(call['trace']['state']['districts']),
+                    call['trace']['state']['borders'],
                     ''
                 ).addClass('partition'));
                 td.append(title);
 
                 var subtable = $('<table class="trace">');
-                create_trace_table(call['sub_trace'], subtable);
+                create_trace_table(call['trace'], subtable);
                 td.append(subtable);
                 subtable.toggle();
 
                 var result = $('<div>');
                 result.append('<br><h3>Best gerrymanders: </h3>');
-                for (var j = 0; j < call['sub_partitions'].length; j++) {
+                for (var j = 0; j < call['partitions'].length; j++) {
                     result.append(create_map(
-                        create_districts_demographics(call['sub_partitions'][j]['districts']),
-                        call['sub_partitions'][j]['borders'],
+                        create_districts_demographics(call['partitions'][j]['districts']),
+                        call['partitions'][j]['borders'],
                         ''
                     ).addClass('partition'));
                     result.append('&nbsp;');

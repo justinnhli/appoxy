@@ -8,7 +8,7 @@ Districts = Tuple[District, ...]
 State = NamedTuple('State', (('rows', int), ('cols', int), ('grid', str)))
 RecursiveCall = NamedTuple('RecursiveCall', (
     ('first_district', District),
-    ('sub_trace', 'Trace'),
+    ('trace', 'Trace'),
     ('partitions', List[Districts]),
 ))
 Trace = NamedTuple('Trace', (
