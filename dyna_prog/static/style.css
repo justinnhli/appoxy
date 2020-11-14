@@ -23,7 +23,7 @@ table.electoral-map td.border.active {background-color:#000000;}
 table.electoral-map td.border-toggle {cursor:default;}
 table.electoral-map td.border-toggle div {width:100%; font-size:0.075em;}
 
-h2, h3 {display:inline;}
+h2 {display:inline;}
 ul.trace > li {list-style-type:none;}
 ul.first-districts.even > li > div:hover {background-color:#D0D0D0;}
 ul.first-districts.odd > li > div:hover {background-color:#F0F0F0;}

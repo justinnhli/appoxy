@@ -333,7 +333,7 @@ $(function () {
         };
         SOLUTION_DEMOGRAPHICS = copy(DEMOGRAPHICS);
         var trace_list = $('#trace-list');
-        trace_list.html('<h3>Solving; this will take a moment...</h3>');
+        trace_list.html('Solving; this will take a moment...');
         $.post('/dyna_prog/solve', JSON.stringify(data))
             .done(function(response) {
                 trace_list.empty();
@@ -370,17 +370,17 @@ $(function () {
         var calls = trace['calls'];
         if (calls.length == 0) {
             var li = $('<li>');
-            li.append($('<h3>Only one district remaining: </h3>'));
+            li.append('Only one district remaining: ');
             li.append(create_map(
                 create_districts_demographics(trace['state']['districts']),
                 trace['state']['borders'],
                 ''
             ).addClass('partition'));
-            li.append($('<h3> (base case)</h3>'));
+            li.append(' (base case)');
             list.append(li);
         } else {
             var li = $('<li>');
-            li.append($('<h3>Solving </h3>'))
+            li.append('Solving ')
             li.append(create_map(
                 create_districts_demographics(trace['state']['districts']),
                 trace['state']['borders'],
@@ -402,13 +402,13 @@ $(function () {
                 var call = calls[i];
                 var div = $('<div>');
 
-                div.append('<h3>Trying </h3>');
+                div.append('Trying ');
                 div.append(create_map(
                     create_districts_demographics(call['first_district']['districts']),
                     call['first_district']['borders'],
                     ''
                 ).addClass('partition'));
-                div.append('<h3> as the first district and recursing on </h3>');
+                div.append(' as the first district and recursing on ');
                 div.append(create_map(
                     create_districts_demographics(call['trace']['state']['districts']),
                     call['trace']['state']['borders'],
@@ -430,7 +430,7 @@ $(function () {
                 child_traces.append(sublist).toggle();
                 div.append(child_traces);
 
-                div.append('<h3>Candidate Gerrymanders: </h3>');
+                div.append('Candidate Gerrymanders: ');
                 for (var j = 0; j < call['partitions'].length; j++) {
                     div.append(create_map(
                         create_districts_demographics(call['partitions'][j]['districts']),
@@ -447,7 +447,7 @@ $(function () {
             list.append(list_item);
 
             var child = $('<li>');
-            child.append('<h3>All Candidate Gerrymanders: </h3>');
+            child.append('All Candidate Gerrymanders: ');
             for (var i = 0; i < trace['all_partitions'].length; i++) {
                 child.append(create_map(
                     create_districts_demographics(trace['all_partitions'][i]['districts']),
@@ -459,7 +459,7 @@ $(function () {
             list.append(child);
 
             var child = $('<li>');
-            child.append('<h3>Best Gerrymanders: </h3>');
+            child.append('Best Gerrymanders: ');
             for (var i = 0; i < trace['best_partitions'].length; i++) {
                 child.append(create_map(
                     create_districts_demographics(trace['best_partitions'][i]['districts']),
