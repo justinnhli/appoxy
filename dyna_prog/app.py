@@ -58,20 +58,22 @@ def districts_to_map(state, districts):
     }
 
 
-def to_jsonable(trace):
+def to_jsonable(trace, trace_id='trace-0'):
     # type: (Trace) -> Dict[str, Any]
     return {
+        'id': trace_id,
         'depth': trace.depth,
         'state': districts_to_map(trace.state, state_as_districts(trace.state)),
         'calls': [
             {
                 'first_district': districts_to_map(trace.state, (first_district,)),
-                'trace': to_jsonable(sub_trace),
+                'trace': to_jsonable(sub_trace, f'{trace_id}-{child_id}'),
                 'partitions': [
                     districts_to_map(trace.state, partition)
                     for partition in sub_partitions
                 ],
-            } for first_district, sub_trace, sub_partitions in trace.calls
+            } for child_id, (first_district, sub_trace, sub_partitions)
+            in enumerate(trace.calls)
         ],
         'all_partitions': [
             districts_to_map(trace.state, partition)
