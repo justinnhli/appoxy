@@ -11,8 +11,6 @@ $(function () {
     var DEMOGRAPHICS = [];
     var SOLUTION_DEMOGRAPHICS = [];
 
-    var PARTIES = ['red', 'blue'];
-
     const MAIN_PREFIX = 'main';
 
     function copy(obj) {
@@ -43,23 +41,22 @@ $(function () {
         var num_rows = get_num_rows();
         var num_cols = get_num_cols();
         var from_default = (DEMOGRAPHICS.length === 0);
-        var new_pop = [];
+        var new_demo = [];
         for (var row = 0; row < num_rows; row += 1) {
-            var new_pop_row = [];
+            var new_demo_row = [];
             for (var col = 0; col < num_cols; col += 1) {
                 if (from_default && row < DEFAULT_BOARD.length && col < DEFAULT_BOARD[0].length) {
-                    new_pop_row.push(create_population(true, DEFAULT_BOARD[row][col]));
+                    new_demo_row.push(create_population(true, DEFAULT_BOARD[row][col]));
                 } else if (row < DEMOGRAPHICS.length && col < DEMOGRAPHICS[0].length) {
-                    new_pop_row.push(DEMOGRAPHICS[row][col]);
+                    new_demo_row.push(DEMOGRAPHICS[row][col]);
                 } else {
-                    new_pop_row.push(create_population(false, null));
+                    new_demo_row.push(create_population(false, null));
                 }
             }
-            new_pop.push(new_pop_row);
+            new_demo.push(new_demo_row);
         }
-        DEMOGRAPHICS = new_pop;
-        $('#main-map-container').empty();
-        $('#main-map-container').append(create_map(DEMOGRAPHICS, [], MAIN_PREFIX));
+        DEMOGRAPHICS = new_demo;
+        $('#main-map-container').html(create_map(DEMOGRAPHICS, [], MAIN_PREFIX));
         populate_num_districts();
     }
 
@@ -138,8 +135,7 @@ $(function () {
     }
 
     function create_cell(demographics, id_prefix, row, col, toggleable) {
-        var td = $('<td>');
-        td.addClass('cell');
+        var td = $('<td class="cell">');
         if (demographics[row][col] === '-') {
             td.addClass('empty-cell');
         } else if (demographics[row][col] === 'R') {
@@ -149,13 +145,11 @@ $(function () {
         }
 
         td.attr('id', id_prefix + '-' + row + '-' + col);
-        var span = $('<span>');
-        span.addClass('dot');
+        var span = $('<span class="dot">');
         if (toggleable) {
             span.click(dot_on_click);
         }
-        td.append($('<div>').append(span));
-        return td;
+        return td.append($('<div>').append(span));
     }
 
     function create_row(demographics, id_prefix, toggleable, row, num_cols) {
@@ -163,7 +157,7 @@ $(function () {
         for (var col = 0; col < num_cols; col += 1) {
             var border_id = id_prefix + '-' + row + '-' + (col - 1) + '-' + row + '-' + col;
             if (col === 0) {
-                tr.append('<td class="border vertical-border active"></td>')
+                tr.append('<td class="border vertical-border active"></td>');
             } else if (toggleable) {
                 tr.append('<td class="border vertical-border border-toggle inactive" id="' + border_id + '"></td>');
             } else {
@@ -232,11 +226,7 @@ $(function () {
             }
             for (var j = 0; j < district.length; j += 1) {
                 var cell = map.find('#' + id_prefix + '-' + district[j][0] + '-' + district[j][1]);
-                cell.removeClass('empty-district');
-                cell.removeClass('red-district');
-                cell.removeClass('blue-district');
-                cell.removeClass('purple-district');
-                cell.addClass(new_class);
+                cell.removeClass('empty-district red-district blue-district purple-district').addClass(new_class);
             }
         }
     }
@@ -278,14 +268,12 @@ $(function () {
         var toggleable = (id_prefix === MAIN_PREFIX);
         var num_rows = demographics.length;
         var num_cols = demographics[0].length;
-        var table = null;
-        if (id_prefix === '') {
-            table = $('<table class="electoral-map">');
-        } else {
-            table = $('<table class="electoral-map" id="' + id_prefix + '-map">');
+        var table = $('<table class="electoral-map">');
+        if (id_prefix !== '') {
+            table.attr('id', id_prefix + '-map');
         }
         if (id_prefix !== MAIN_PREFIX) {
-            table.addClass('solution-map');
+            table.addClass('partition');
         }
         table.append(create_horizontal_border(id_prefix, toggleable, num_cols));
         for (var row = 0; row < num_rows; row += 1) {
@@ -350,26 +338,24 @@ $(function () {
 
     function create_trace_list(trace, list) {
         var calls = trace.calls;
-        var num_districts = trace.num_districts;
 
-        var li = $('<li>');
-        li.append('Gerrymandering ')
-        li.append(create_map(
+        var list_item = $('<li>');
+        list_item.append('Gerrymandering ').append(create_map(
             create_districts_demographics(trace.state.districts),
             trace.state.borders,
             ''
-        ).addClass('partition'));
-        li.append(' into ' + num_districts + ' districts');
-        if (num_districts == 1) {
-            li.append(' (base case)');
+        )).append(' into ' + trace.num_districts + ' districts');
+        if (trace.num_districts == 1) {
+            list_item.append(' (base case)');
         } else {
-            var trace_toggle = $('<a href="">toggle trace</a>').click(function (event) {
-                $('#' + trace.id).toggle();
-                return false;
-            });
-            li.append(' (').append(trace_toggle).append(')');
+            list_item.append(' (').append(
+                $('<a href="">toggle trace</a>').click(function (event) {
+                    $('#' + trace.id).toggle();
+                    return false;
+                })
+            ).append(')');
         }
-        list.append(li);
+        list.append(list_item);
 
         var child_list = $('<ul class="first-districts">');
         if (trace.num_districts % 2 == 0) {
@@ -381,33 +367,24 @@ $(function () {
             var call = calls[i];
             var div = $('<div>');
 
-            div.append('Trying ');
-            div.append(create_map(
+            div.append('Trying ').append(create_map(
                 create_districts_demographics(call.first_district.districts),
                 call.first_district.borders,
                 ''
-            ).addClass('partition'));
-            div.append(' as the first district and recursing on ');
-            div.append(create_map(
+            )).append(' as the first district and recursing on ').append(create_map(
                 create_districts_demographics(call.trace.state.districts),
                 call.trace.state.borders,
                 ''
-            ).addClass('partition'));
-            var call_id = call.trace.id + '-call';
-            var trace_toggle = $('<a href="">toggle trace</a>').attr('id', call_id + '-toggle');
-            trace_toggle.click(function (event) {
-                var toggle_id = event.target.id;
-                $('#' + event.target.id.substring(0, toggle_id.length - 7)).toggle();
-                return false;
-            });
-            div.append(' (').append(trace_toggle).append(')').append('<br>');
+            )).append(' (').append(
+                $('<a href="">toggle trace</a>').attr('id', call.trace.id + '-call-toggle').click(function (event) {
+                    $('#' + event.target.id.substring(0, event.target.id.length - 7)).toggle();
+                    return false;
+                })
+            ).append(')<br>');
 
-            var child_traces = $('<div>');
-            child_traces.attr('id', call.trace.id + '-call');
             var sublist = $('<ul class="trace">');
             create_trace_list(call.trace, sublist);
-            child_traces.append(sublist).toggle();
-            div.append(child_traces);
+            div.append($('<div>').attr('id', call.trace.id + '-call').append(sublist).toggle());
 
             div.append('Candidate Gerrymanders: ');
             for (var j = 0; j < call.partitions.length; j++) {
@@ -415,39 +392,32 @@ $(function () {
                     create_districts_demographics(call.partitions[j].districts),
                     call.partitions[j].borders,
                     ''
-                ).addClass('partition'));
-                div.append('&nbsp;');
+                )).append('&nbsp;');
             }
+
             child_list.append($('<li>').append(div));
         }
-        var list_item = $('<li>').append(child_list);
-        list_item.toggle();
-        list_item.attr('id', trace.id);
-        list.append(list_item);
+        list.append($('<li>').attr('id', trace.id).append(child_list).toggle());
 
-        var child = $('<li>');
-        child.append('All Candidate Gerrymanders: ');
+        list_item = $('<li>').append('All Candidate Gerrymanders: ');
         for (var i = 0; i < trace.all_partitions.length; i++) {
-            child.append(create_map(
+            list_item.append(create_map(
                 create_districts_demographics(trace.all_partitions[i].districts),
                 trace.all_partitions[i].borders,
                 ''
-            ).addClass('partition'));
-            child.append('&nbsp;');
+            )).append('&nbsp;');
         }
-        list.append(child);
+        list.append(list_item);
 
-        var child = $('<li>');
-        child.append('Best Gerrymanders: ');
+        list_item = $('<li>').append('Best Gerrymanders: ');
         for (var i = 0; i < trace.best_partitions.length; i++) {
-            child.append(create_map(
+            list_item.append(create_map(
                 create_districts_demographics(trace.best_partitions[i].districts),
                 trace.best_partitions[i].borders,
                 ''
-            ).addClass('partition'));
-            child.append('&nbsp;');
+            )).append('&nbsp;');
         }
-        list.append(child);
+        list.append(list_item);
     }
 
     function populate_num_districts() {
@@ -498,8 +468,7 @@ $(function () {
             control.val(5);
         }
         create_board();
-        $('#main-map-container').empty();
-        $('#main-map-container').append(create_map(DEMOGRAPHICS, [], MAIN_PREFIX));
+        $('#main-map-container').html(create_map(DEMOGRAPHICS, [], MAIN_PREFIX));
         save_demographics();
     }
 
@@ -511,8 +480,7 @@ $(function () {
                 DEMOGRAPHICS[row][col] = '-';
             }
         }
-        $('#main-map-container').empty();
-        $('#main-map-container').append(create_map(DEMOGRAPHICS, [], MAIN_PREFIX));
+        $('#main-map-container').html(create_map(DEMOGRAPHICS, [], MAIN_PREFIX));
         populate_num_districts();
         save_demographics();
     }
@@ -525,8 +493,7 @@ $(function () {
                 DEMOGRAPHICS[row][col] = create_population(true, null);
             }
         }
-        $('#main-map-container').empty();
-        $('#main-map-container').append(create_map(DEMOGRAPHICS, [], MAIN_PREFIX));
+        $('#main-map-container').html(create_map(DEMOGRAPHICS, [], MAIN_PREFIX));
         populate_num_districts();
         save_demographics();
     }
@@ -544,8 +511,7 @@ $(function () {
             DEMOGRAPHICS[row][col] = '-';
         }
         populate_num_districts();
-        var new_cell = $(create_cell(DEMOGRAPHICS, MAIN_PREFIX, row, col, true));
-        cell.replaceWith(new_cell);
+        cell.replaceWith(create_cell(DEMOGRAPHICS, MAIN_PREFIX, row, col, true));
         show_district_winners($('#main-map'), DEMOGRAPHICS, [], MAIN_PREFIX);
         save_demographics();
     }
@@ -596,19 +562,18 @@ $(function () {
             var num_rows = bound_range(hashed_obj.rows, 2, 5);
             var num_cols = bound_range(hashed_obj.cols, 2, 5);
             var demo_str = hashed_obj.demographics;
-            var new_pop = [];
+            var new_demo = [];
             for (var row = 0; row < num_rows; row += 1) {
-                var new_pop_row = [];
+                var new_demo_row = [];
                 for (var col = 0; col < num_cols; col += 1) {
-                    new_pop_row.push(demo_str[row * num_cols + col]);
+                    new_demo_row.push(demo_str[row * num_cols + col]);
                 }
-                new_pop.push(new_pop_row);
+                new_demo.push(new_demo_row);
             }
-            DEMOGRAPHICS = new_pop;
+            DEMOGRAPHICS = new_demo;
             $('#num-rows').val(num_rows);
             $('#num-cols').val(num_cols);
-            $('#main-map-container').empty();
-            $('#main-map-container').append(create_map(DEMOGRAPHICS, [], MAIN_PREFIX));
+            $('#main-map-container').html(create_map(DEMOGRAPHICS, [], MAIN_PREFIX));
             populate_num_districts();
         }
     }
