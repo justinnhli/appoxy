@@ -627,9 +627,20 @@ $(function () {
     function load_demographics() {
         var hashed_obj = deparam(location.hash.substr(1));
         if (hashed_obj['demographics'] !== undefined) {
-            DEMOGRAPHICS = JSON.parse(atob(hashed_obj['demographics']));
-            $('#num-rows').val(DEMOGRAPHICS.length);
-            $('#num-cols').val(DEMOGRAPHICS[0].length);
+            var num_rows = hashed_obj['rows'];
+            var num_cols = hashed_obj['cols'];
+            var demo_str = hashed_obj['demographics'];
+            var new_pop = [];
+            for (var row = 0; row < num_rows; row += 1) {
+                var new_pop_row = [];
+                for (var col = 0; col < num_cols; col += 1) {
+                    new_pop_row.push(demo_str[row * num_cols + col]);
+                }
+                new_pop.push(new_pop_row);
+            }
+            DEMOGRAPHICS = new_pop;
+            $('#num-rows').val(num_rows);
+            $('#num-cols').val(num_cols);
             $('#main-map-container').empty();
             $('#main-map-container').append(create_map(DEMOGRAPHICS, [], MAIN_PREFIX));
             populate_num_districts();
@@ -641,8 +652,18 @@ $(function () {
             return;
         }
         SAVING = true;
+        var demo_str = '';
+        var num_rows = get_num_rows();
+        var num_cols = get_num_cols();
+        for (var row = 0; row < num_rows; row += 1) {
+            for (var col = 0; col < num_cols; col += 1) {
+                demo_str += DEMOGRAPHICS[row][col];
+            }
+        }
         location.hash = param({
-            'demographics': btoa(JSON.stringify(DEMOGRAPHICS)),
+            'rows': num_rows,
+            'cols': num_cols,
+            'demographics': demo_str,
         });
         window.setTimeout(function () { SAVING = false ; }, 5000);
     }
