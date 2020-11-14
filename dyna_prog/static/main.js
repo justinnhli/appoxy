@@ -27,14 +27,6 @@ $(function () {
         return parseInt($('#num-cols').val());
     }
 
-    function rand_range(min, max) {
-        return min + Math.floor(Math.random() * (max - min));
-    }
-
-    function capitalize(str) {
-        return str.charAt(0).toUpperCase() + str.substring(1);
-    }
-
     function create_population(active, preference) {
         if (preference !== null) {
             return preference;
