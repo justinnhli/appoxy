@@ -36,7 +36,9 @@ $(function () {
     }
 
     function create_population(active, preference) {
-        if (!active) {
+        if (preference !== null) {
+            return preference;
+        } else if (!active) {
             return '-';
         } else if (Math.random() < 0.5) {
             return 'R';
