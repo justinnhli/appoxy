@@ -9,12 +9,7 @@ $(function () {
     var LOADING = false;
     var SAVING = false;
     var DEMOGRAPHICS = [];
-    var BORDERS = [];
-    var OBJECTIVE = [];
     var SOLUTION_DEMOGRAPHICS = [];
-    var SOLUTIONS = [];
-    var SELECTED_ROW = 0;
-    var SELECTED_COL = 0;
 
     var PARTIES = ['red', 'blue'];
 
@@ -70,15 +65,7 @@ $(function () {
         }
         DEMOGRAPHICS = new_pop;
         $('#main-map-container').empty();
-        $('#main-map-container').append(create_map(DEMOGRAPHICS, BORDERS, MAIN_PREFIX));
-        var new_borders = [];
-        for (var i = 0; i < BORDERS.length; i += 1) {
-            var border = BORDERS[i];
-            if ($('#' + MAIN_PREFIX + '-' + border).length > 0) {
-                new_borders.push(border);
-            }
-        }
-        BORDERS = new_borders;
+        $('#main-map-container').append(create_map(DEMOGRAPHICS, [], MAIN_PREFIX));
         populate_num_districts();
     }
 
@@ -521,9 +508,6 @@ $(function () {
                 var row2 = parts[3];
                 var col2 = parts[4];
                 var border_coord = row1 + '-' + col1 + '-' + row2 + '-' + col2;
-                if (!BORDERS.includes(border_coord)) {
-                    BORDERS.push(border_coord);
-                }
             }
         } else {
             border.removeClass('active');
@@ -535,9 +519,6 @@ $(function () {
                 var row2 = parts[3];
                 var col2 = parts[4];
                 var border_coord = row1 + '-' + col1 + '-' + row2 + '-' + col2;
-                if (BORDERS.includes(border_coord)) {
-                    BORDERS.splice(BORDERS.indexOf(border_coord), 1);
-                }
             }
         }
     }
@@ -560,12 +541,11 @@ $(function () {
         }
         create_board();
         $('#main-map-container').empty();
-        $('#main-map-container').append(create_map(DEMOGRAPHICS, BORDERS, MAIN_PREFIX));
+        $('#main-map-container').append(create_map(DEMOGRAPHICS, [], MAIN_PREFIX));
         save_demographics();
     }
 
     function clear_population_on_click() {
-        BORDERS = [];
         var num_rows = get_num_rows();
         var num_cols = get_num_cols();
         for (var row = 0; row < num_rows; row += 1) {
@@ -574,13 +554,12 @@ $(function () {
             }
         }
         $('#main-map-container').empty();
-        $('#main-map-container').append(create_map(DEMOGRAPHICS, BORDERS, MAIN_PREFIX));
+        $('#main-map-container').append(create_map(DEMOGRAPHICS, [], MAIN_PREFIX));
         populate_num_districts();
         save_demographics();
     }
 
     function randomize_population_on_click() {
-        BORDERS = [];
         var num_rows = get_num_rows();
         var num_cols = get_num_cols();
         for (var row = 0; row < num_rows; row += 1) {
@@ -589,7 +568,7 @@ $(function () {
             }
         }
         $('#main-map-container').empty();
-        $('#main-map-container').append(create_map(DEMOGRAPHICS, BORDERS, MAIN_PREFIX));
+        $('#main-map-container').append(create_map(DEMOGRAPHICS, [], MAIN_PREFIX));
         populate_num_districts();
         save_demographics();
     }
@@ -609,7 +588,7 @@ $(function () {
         populate_num_districts();
         var new_cell = $(create_cell(DEMOGRAPHICS, MAIN_PREFIX, row, col, true));
         cell.replaceWith(new_cell);
-        show_district_winners($('#main-map'), DEMOGRAPHICS, BORDERS, MAIN_PREFIX);
+        show_district_winners($('#main-map'), DEMOGRAPHICS, [], MAIN_PREFIX);
         save_demographics();
     }
 
@@ -647,11 +626,10 @@ $(function () {
         var hashed_obj = deparam(location.hash.substr(1));
         if (hashed_obj['demographics'] !== undefined) {
             DEMOGRAPHICS = JSON.parse(atob(hashed_obj['demographics']));
-            BORDERS = JSON.parse(atob(hashed_obj['borders']));
             $('#num-rows').val(DEMOGRAPHICS.length);
             $('#num-cols').val(DEMOGRAPHICS[0].length);
             $('#main-map-container').empty();
-            $('#main-map-container').append(create_map(DEMOGRAPHICS, BORDERS, MAIN_PREFIX));
+            $('#main-map-container').append(create_map(DEMOGRAPHICS, [], MAIN_PREFIX));
             populate_num_districts();
         }
     }
@@ -663,7 +641,6 @@ $(function () {
         SAVING = true;
         location.hash = param({
             'demographics': btoa(JSON.stringify(DEMOGRAPHICS)),
-            'borders': btoa(JSON.stringify(BORDERS)),
         });
         window.setTimeout(function () { SAVING = false ; }, 5000);
     }
