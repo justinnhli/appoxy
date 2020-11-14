@@ -371,12 +371,11 @@ $(function () {
         if (calls.length == 0) {
             var li = $('<li>');
             li.append($('<h3>Only one district remaining: </h3>'));
-            var map = create_map(
+            li.append(create_map(
                 create_districts_demographics(trace['state']['districts']),
                 trace['state']['borders'],
                 ''
-            ).addClass('partition');
-            li.append(map)
+            ).addClass('partition'));
             li.append($('<h3> (base case)</h3>'));
             list.append(li);
         } else {
@@ -387,13 +386,11 @@ $(function () {
                 trace['state']['borders'],
                 ''
             ).addClass('partition'));
-            var trace_toggle = $('<a href="">toggle trace</a>');
-            trace_toggle.click(function (event) {
+            var trace_toggle = $('<a href="">toggle trace</a>').click(function (event) {
                 $('#' + trace['id']).toggle();
                 return false;
             });
-            li.append(' (').append(trace_toggle).append(')');
-            list.append(li);
+            list.append(li.append(' (').append(trace_toggle).append(')'));
 
             var child_list = $('<ul class="first-districts">');
             if (trace['depth'] % 2 == 0) {
@@ -472,7 +469,6 @@ $(function () {
                 child.append('&nbsp;');
             }
             list.append(child);
-
         }
     }
 
