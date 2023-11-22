@@ -1,11 +1,11 @@
 # core
-Flask==1.1.1
-Jinja2==2.11.3
-Werkzeug==0.16.0
-gunicorn==20.0.4
+Flask
+Jinja2
+Werkzeug
+gunicorn
 
 # utility
 git+https://github.com/justinnhli/pegparse@5c71207a5a32ed6e3502eafb11ae5d91bc9c1385#egg=pegparse
 
 # redistricting
-networkx==2.4
+networkx
