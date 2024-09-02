@@ -344,31 +344,34 @@ class MemographWalker(ASTWalker): # type: ignore
         return TypedValue(ast.match, java_type='boolean')
 
 
-def namespace_to_dot(namespace, title, parent_name, port_prefix):
+def namespace_to_dot(namespace, title, parent_name, port_prefix, table_wrap=True):
     # type: (Mapping[str, TypedValue], str, str, str) -> Tuple[str, List[str]]
     """Serialize a namespace to Graphviz format."""
     references = [] # type: List[str]
     types = [] # type: List[str]
-    values = [] # type: List[str]
+    values = [] # type: List[tuple[str, str]]
     for name, child in namespace.items():
         port_name = f'_{port_prefix}_{name}'
         types.append(f'{child.type} {name}')
         if child.is_null:
-            values.append(f'<{port_name}> &empty;')
+            values.append((port_name, '&empty;'))
         elif child.is_primitive:
-            values.append(f'<{port_name}> {child.value}')
+            values.append((port_name, child.value))
         else:
-            values.append(f'<{port_name}>')
+            values.append((port_name, ''))
             references.append(f'_{parent_name}:{port_name} -> _{child.value.name}')
-    label = []
-    label.append(title)
-    if types:
-        label.append('| {')
-        label.append('{ ' + ' | '.join(types) + ' }')
-        label.append('|')
-        label.append('{ ' + ' | '.join(values) + ' }')
-        label.append('}')
-    return ' '.join(label), references
+    html = []
+    if table_wrap:
+        html.append('<table border="0" cellspacing="0" bgcolor="#FFFFFF">')
+    html.append(f'<tr><td colspan="2" border="1" bgcolor="#C0C0C0">{title}</td></tr>')
+    for child_type, (child_port_name, child_value) in zip(types, values):
+        html.append('<tr>')
+        html.append(f'<td border="1" align="left">{child_type}</td>')
+        html.append(f'<td border="1" port="{child_port_name}">{child_value}</td>')
+        html.append('</tr>')
+    if table_wrap:
+        html.append('</table>')
+    return ''.join(html), references
 
 
 def stack_to_dot(stack):
@@ -383,19 +386,20 @@ def stack_to_dot(stack):
             frame,
             frame_name,
             '',
-            str(index),
+            f'stack_{index}',
+            table_wrap=False,
         )
         results.append(frame_dot)
         references.extend(new_references)
-    dot = '_ [shape="record", color="#A0A0A0", label="{{' + ' | | '.join(results) + ' }}"]'
+    dot = '_ [shape="none", label=<<table border="0" cellspacing="0" bgcolor="#FFFFFF">' + ''.join(results) + '</table>>]'
     return [dot], references
 
 
 def string_to_dot(typed_value):
     # type: (TypedValue) -> Tuple[List[str], List[str]]
     """Serialize a String object to Graphviz format."""
-    string = f'{typed_value.value}'.replace('"', r'\"')
-    dot = f'_{typed_value.name} [shape="record", color="#A0A0A0", label="{{{{String | {string}}}}}"]'
+    string = typed_value.value[1:-1].replace('"', r'\"')
+    dot = f'_{typed_value.name} [shape="none", label=<<table border="0" cellspacing="0" bgcolor="#FFFFFF"><tr><td border="1" bgcolor="#C0C0C0">String</td></tr><tr><td border="1">"{string}"</td></tr></table>>]'
     return [dot], []
 
 
@@ -404,23 +408,29 @@ def array_to_dot(typed_value):
     """Serialize an array to Graphviz format."""
     # pylint: disable = f-string-without-interpolation
     references = [] # type: List[str]
+    values = [] # type: list[str]
     items = [] # type: List[str]
     for index, child in enumerate(typed_value.value):
         if child.is_null:
-            items.append(f'{{ {index} | <{index}> &empty; }}')
+            values.append('&empty')
         elif child.is_primitive:
-            items.append(f'{{ {index} | <{index}> {child.value} }}')
+            values.append(child.value)
         else:
-            items.append(f'{{ {index} | <{index}> }}')
+            values.append('')
             references.append(f'_{typed_value.name}:{index} -> _{child.value.name}')
-    label = ' '.join([
-        '{',
-        typed_value.type,
-        '| {',
-        ' | '.join(items),
-        '} }',
-    ])
-    dot = f'_{typed_value.name} [shape="record", color="#A0A0A0", label="{{{label}}}"]'
+    html = []
+    html.append('<table border="0" cellspacing="0" bgcolor="#FFFFFF">')
+    html.append(f'<tr><td colspan="{len(values)}" border="1" bgcolor="#C0C0C0">{typed_value.type}</td></tr>')
+    html.append('<tr>')
+    for index, _ in enumerate(values):
+        html.append(f'<td border="1">{index}</td>')
+    html.append('</tr>')
+    html.append('<tr>')
+    for index, value in enumerate(values):
+        html.append(f'<td border="1" port="{index}">{value}</td>')
+    html.append('</tr>')
+    html.append('</table>')
+    dot = f'_{typed_value.name} [shape="none", label=<' + ''.join(html) + '>]'
     return [dot], references
 
 
@@ -428,13 +438,13 @@ def struct_to_dot(typed_value):
     # type: (TypedValue) -> Tuple[List[str], List[str]]
     """Serialize an object to Graphviz format."""
     # pylint: disable = f-string-without-interpolation
-    record, references = namespace_to_dot(
+    html, references = namespace_to_dot(
         typed_value.value,
         typed_value.type,
         typed_value.name,
         '',
     )
-    dot = f'_{typed_value.name} [shape="record", color="#A0A0A0", label="{record}"]'
+    dot = f'_{typed_value.name} [shape="none", label=<{html}>]'
     return [dot], references
 
 
@@ -471,10 +481,14 @@ def memory_to_dot(stack, heap):
     output.append(indent('node [fontsize=10]', 4 * ' '))
     output.append(indent('subgraph cluster_stack {', 4 * ' '))
     output.append(indent('label="STACK"', 8 * ' '))
+    output.append(indent('pencolor="#A0A0A0"', 8 * ' '))
+    output.append(indent('bgcolor="#F0F0F0"', 8 * ' '))
     output.append(indent('\n'.join(stack_dot), 8 * ' '))
     output.append(indent('}', 4 * ' '))
     output.append(indent('subgraph cluster_heap {', 4 * ' '))
     output.append(indent('label="HEAP"', 8 * ' '))
+    output.append(indent('pencolor="#A0A0A0"', 8 * ' '))
+    output.append(indent('bgcolor="#F0F0F0"', 8 * ' '))
     output.append(indent('\n'.join(heap_dot), 8 * ' '))
     output.append(indent('}', 4 * ' '))
     output.append(indent('\n'.join(references), 4 * ' '))
