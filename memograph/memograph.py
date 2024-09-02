@@ -359,11 +359,11 @@ def namespace_to_dot(namespace, title, parent_name, port_prefix, table_wrap=True
             values.append((port_name, child.value))
         else:
             values.append((port_name, ''))
-            references.append(f'_{parent_name}:{port_name} -> _{child.value.name}')
+            references.append(f'_{parent_name}:{port_name} -> _{child.value.name}:title')
     html = []
     if table_wrap:
         html.append('<table border="0" cellspacing="0" bgcolor="#FFFFFF">')
-    html.append(f'<tr><td colspan="2" border="1" bgcolor="#C0C0C0">{title}</td></tr>')
+    html.append(f'<tr><td colspan="2" border="1" bgcolor="#C0C0C0" port="title">{title}</td></tr>')
     for child_type, (child_port_name, child_value) in zip(types, values):
         html.append('<tr>')
         html.append(f'<td border="1" align="left">{child_type}</td>')
@@ -399,7 +399,7 @@ def string_to_dot(typed_value):
     # type: (TypedValue) -> Tuple[List[str], List[str]]
     """Serialize a String object to Graphviz format."""
     string = typed_value.value[1:-1].replace('"', r'\"')
-    dot = f'_{typed_value.name} [shape="none", label=<<table border="0" cellspacing="0" bgcolor="#FFFFFF"><tr><td border="1" bgcolor="#C0C0C0">String</td></tr><tr><td border="1">"{string}"</td></tr></table>>]'
+    dot = f'_{typed_value.name} [shape="none", label=<<table border="0" cellspacing="0" bgcolor="#FFFFFF"><tr><td border="1" bgcolor="#C0C0C0" port="title">String</td></tr><tr><td border="1">"{string}"</td></tr></table>>]'
     return [dot], []
 
 
@@ -417,10 +417,10 @@ def array_to_dot(typed_value):
             values.append(child.value)
         else:
             values.append('')
-            references.append(f'_{typed_value.name}:{index} -> _{child.value.name}')
+            references.append(f'_{typed_value.name}:{index} -> _{child.value.name}:title')
     html = []
     html.append('<table border="0" cellspacing="0" bgcolor="#FFFFFF">')
-    html.append(f'<tr><td colspan="{len(values)}" border="1" bgcolor="#C0C0C0">{typed_value.type}</td></tr>')
+    html.append(f'<tr><td colspan="{len(values)}" border="1" bgcolor="#C0C0C0" port="title">{typed_value.type}</td></tr>')
     html.append('<tr>')
     for index, _ in enumerate(values):
         html.append(f'<td border="1">{index}</td>')
