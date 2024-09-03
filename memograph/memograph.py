@@ -359,7 +359,7 @@ def namespace_to_dot(namespace, title, parent_name, port_prefix, table_wrap=True
             values.append((port_name, child.value))
         else:
             values.append((port_name, ''))
-            references.append(f'_{parent_name}:{port_name} -> _{child.value.name}:title')
+            references.append(f'_{parent_name}:{port_name}:c -> _{child.value.name}:title [tailclip=false]')
     html = []
     if table_wrap:
         html.append('<table border="0" cellspacing="0" bgcolor="#FFFFFF">')
@@ -417,7 +417,7 @@ def array_to_dot(typed_value):
             values.append(child.value)
         else:
             values.append('')
-            references.append(f'_{typed_value.name}:{index} -> _{child.value.name}:title')
+            references.append(f'_{typed_value.name}:{index}:c -> _{child.value.name}:title [tailclip=false]')
     html = []
     html.append('<table border="0" cellspacing="0" bgcolor="#FFFFFF">')
     html.append(f'<tr><td colspan="{len(values)}" border="1" bgcolor="#C0C0C0" port="title">{typed_value.type}</td></tr>')
