@@ -143,14 +143,15 @@ def gerrymander(state, num_districts, district_size):
                         sub_partitions.add(tuple(sorted((first_district, ) + sub_partition)))
                     calls.append(RecursiveCall(first_district, sub_trace, sub_partitions))
                     all_partitions |= sub_partitions
-            all_partitions = sorted(all_partitions)
-            scores = [score_partition(partition, state) for partition in all_partitions]
-            best_score = max(scores)
-            best_partitions = [
-                partition for partition, score
-                in zip(all_partitions, scores)
-                if score == best_score
-            ]
+            best_partitions = []
+            best_score = (-1, -1)
+            for partition in all_partitions:
+                score = score_partition(partition, state)
+                if score > best_score:
+                    best_partitions = [partition]
+                    best_score = score
+                elif score == best_score:
+                    best_partitions.append(partition)
             cache[cache_key] = CacheValue(all_partitions, best_partitions)
         else:
             all_partitions, best_partitions = cache[cache_key]
