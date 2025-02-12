@@ -2,7 +2,6 @@
 
 from collections import namedtuple
 from importlib import import_module
-from os import listdir
 from pathlib import Path
 
 from flask import abort, Flask, render_template, send_from_directory, url_for, redirect
@@ -36,7 +35,8 @@ def resources(filename):
 @app.route('/<applet>/static/<filename>')
 def get_app_resource(applet, filename):
     if filename.split('.')[-1] in ('css', 'js'):
-        return send_from_directory(join_path(applet, 'static'), filename)
+        print(applet)
+        return send_from_directory(f'{applet}/static', filename)
     else:
         return abort(404)
 
