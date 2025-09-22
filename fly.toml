@@ -1,11 +1,12 @@
-# fly.toml app configuration file generated for subitize on 2023-10-30T15:25:25-07:00
+# fly.toml app configuration file generated for appoxy on 2023-10-30T15:25:25-07:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = "subitize"
+app = "appoxy"
 kill_signal = "SIGINT"
 kill_timeout = "5s"
+primary_region = 'lax'
 
 [experimental]
   auto_rollback = true
