@@ -1,7 +1,39 @@
 /*global
     $, Math, NUM_NEURONS, Number, Viz, clear_log, create_dot, log, run, toggle_pattern
 */
-var NUM_NEURONS = 5;
+var NUM_NEURONS = 9;
+
+function create_patterns() {
+    var init = document.getElementById("init");
+    init.innerHTML = '<tr><th>Neuron</th><th>Pattern 0<br>(Click to change)</th><th>Pattern 1<br>(Click to change)</th><th>Initial Weight</th></tr>';
+    for (var i = 0; i < NUM_NEURONS; i++) {
+        var row = '';
+        row += `<tr><td>Neuron ${i+1}</td>`;
+        var light = Math.floor(2 * Math.random());
+        if (light === 0) {
+            row += `<td id="neuron${i+1}pattern0" class="black" onclick="toggle_pattern(this);">&nbsp;</td>`;
+        } else {
+            row += `<td id="neuron${i+1}pattern0" class="white" onclick="toggle_pattern(this);">&nbsp;</td>`;
+        }
+        light = Math.floor(2 * Math.random());
+        if (light === 0) {
+            row += `<td id="neuron${i+1}pattern1" class="black" onclick="toggle_pattern(this);">&nbsp;</td>`;
+        } else {
+            row += `<td id="neuron${i+1}pattern1" class="white" onclick="toggle_pattern(this);">&nbsp;</td>`;
+        }
+        row += `<td><select id="weight${i+1}">`;
+        var selected = Math.floor(4 * Math.random() - 2);
+        for (var j = -2; j < 3; j++) {
+            if (j === selected) {
+                row += `<option selected="selected">${j/2}</option>`;
+            } else {
+                row += `<option>${j/2}</option>`;
+            }
+        }
+        row += '</select></td></tr>';
+        init.innerHTML += row;
+    }
+}
 
 function toggle_pattern(td) {
     "use strict";
