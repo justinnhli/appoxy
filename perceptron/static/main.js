@@ -1,7 +1,7 @@
 /*global
     $, Math, NUM_NEURONS, Number, Viz, clear_log, create_dot, log, run, toggle_pattern
 */
-var NUM_NEURONS = 9;
+var NUM_NEURONS = 5;
 
 function create_patterns() {
     var init = document.getElementById("init");
@@ -23,11 +23,12 @@ function create_patterns() {
         }
         row += `<td><select id="weight${i+1}">`;
         var selected = Math.floor(4 * Math.random() - 2);
-        for (var j = -2; j < 3; j++) {
+        //for (var j = -2; j < 3; j++) {
+        for (var j = -11; j < 10; j++) {
             if (j === selected) {
-                row += `<option selected="selected">${j/2}</option>`;
+                row += `<option selected="selected">${j/10}</option>`;
             } else {
-                row += `<option>${j/2}</option>`;
+                row += `<option>${j/10}</option>`;
             }
         }
         row += '</select></td></tr>';
@@ -69,12 +70,12 @@ function create_dot(activity, weights, activations, total, threshold, output) {
     dot += "    node [shape=square, style=filled, label=\"\"]";
     dot += "";
     for (i = 0; i < NUM_NEURONS; i += 1) {
-        dot += "    n" + i + " [fillcolor=" + (activity[i] ? "white" : "black") + "]";
+        dot += "    n" + i + " [label=\"" + activity[i] + "\", fillcolor=" + (activity[i] ? "white" : "black") + ", fontcolor=\"" + (activity[i] ? "black" : "white") + "\"]";
     }
     dot += "";
     dot += "    node [shape=box, style=\"\"]";
     dot += "";
-    dot += "    sum [label=\"ADD UP\"]";
+    dot += "    sum [label=\"SUM\"]";
     dot += "    threshold [label=\"> " + threshold + "?\"]";
     dot += "    output [shape=none, fontsize=24, label=\"" + output + "\"]";
     dot += "";
@@ -85,6 +86,7 @@ function create_dot(activity, weights, activations, total, threshold, output) {
     dot += "    sum -> threshold [label=\"" + total.toFixed(1) + "\"]";
     dot += "    threshold -> output";
     dot += "}";
+    console.log(dot);
     return dot;
 }
 
@@ -147,7 +149,6 @@ function run() {
         html += "<tr>";
         html += "<th>Input Pattern " + pattern + "</th>";
         html += "<th>Weights</th>";
-        html += "<th>Multiplied</th>";
         html += "<th>Network classifies it as</th></tr>";
         html += "<tr>";
         html += "<td>";
@@ -162,11 +163,6 @@ function run() {
         html += "<td>";
         for (i = 0; i < NUM_NEURONS; i += 1) {
             html += "<div>" + weights[i].toFixed(1) + "</div>";
-        }
-        html += "</td>";
-        html += "<td>";
-        for (i = 0; i < NUM_NEURONS; i += 1) {
-            html += "<div>" + activations[i].toFixed(1) + "</div>";
         }
         html += "</td>";
         html += "<td>";
